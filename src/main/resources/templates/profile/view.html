@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - SkillBridge</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .profile-container { max-width: 800px; margin-top: 50px; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card-header { background-color: #0d6efd; color: white; border-radius: 10px 10px 0 0 !important; padding: 20px; }
+        .profile-img { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 4px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: -75px; background-color: white; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">SkillBridge</a>
+        <div class="d-flex">
+            <a th:href="@{/profile}" class="btn btn-outline-light me-2">Profile</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container profile-container mb-5">
+    
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="card mt-5">
+        <div class="card-header text-center pb-5">
+            <h2>User Profile</h2>
+        </div>
+        <div class="card-body text-center pt-0">
+            <img th:if="${profile.existingProfilePicturePath != null}" th:src="@{${profile.existingProfilePicturePath}}" alt="Profile Picture" class="profile-img mb-3">
+            <img th:unless="${profile.existingProfilePicturePath != null}" src="https://ui-avatars.com/api/?name=User&background=random" alt="Default Avatar" class="profile-img mb-3">
+            
+            <h3 th:text="${profile.username}">Username</h3>
+            <p class="text-muted mb-4" th:text="${profile.email}">email@example.com</p>
+            
+            <div class="row text-start justify-content-center">
+                <div class="col-md-8">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <th>Department</th>
+                                <td th:text="${profile.department != null ? profile.department : 'Not specified'}"></td>
+                            </tr>
+                            <tr>
+                                <th>Semester</th>
+                                <td th:text="${profile.semester != null ? profile.semester : 'Not specified'}"></td>
+                            </tr>
+                            <tr>
+                                <th>Availability</th>
+                                <td th:text="${profile.availabilityMode}"></td>
+                            </tr>
+                            <tr>
+                                <th>Preferred Time</th>
+                                <td th:text="${profile.preferredTime}"></td>
+                            </tr>
+                            <tr>
+                                <th>Bio</th>
+                                <td th:text="${profile.bio != null ? profile.bio : 'No bio added yet.'}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a th:href="@{/profile/edit}" class="btn btn-primary px-4 py-2">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
