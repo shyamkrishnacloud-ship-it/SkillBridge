@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${skillDto.id != null ? 'Edit Skill' : 'Add Skill'} + ' - SkillBridge'">Manage Skill</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .form-container { max-width: 600px; margin-top: 50px; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card-header { background-color: #0d6efd; color: white; border-radius: 10px 10px 0 0 !important; padding: 20px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">SkillBridge</a>
+        <div class="d-flex">
+            <a th:href="@{/profile}" class="btn btn-outline-light me-2">Profile</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container form-container mb-5">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="mb-0" th:text="${skillDto.id != null ? 'Edit Skill' : 'Add New Skill'}">Manage Skill</h3>
+        </div>
+        <div class="card-body p-4">
+            
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <form th:action="${skillDto.id != null ? '/profile/skills/' + skillDto.id + '/edit' : '/profile/skills/add'}" th:object="${skillDto}" method="post">
+                
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="mb-3">
+                    <label for="skillName" class="form-label">Skill Name</label>
+                    <input type="text" class="form-control" id="skillName" th:field="*{skillName}" placeholder="e.g. Java, Graphic Design">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillName')}" th:errors="*{skillName}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="skillCategory" class="form-label">Category</label>
+                    <select class="form-select" id="skillCategory" th:field="*{skillCategory}">
+                        <option value="" disabled selected>-- Select a category --</option>
+                        <option th:each="cat : ${T(com.skillbridge.model.enums.SkillCategory).values()}" th:value="${cat}" th:text="${cat}"></option>
+                    </select>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillCategory')}" th:errors="*{skillCategory}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label d-block">Skill Type</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="typeOffered" name="skillType" value="OFFERED" th:field="*{skillType}">
+                        <label class="form-check-label" for="typeOffered">Teach</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="typeRequired" name="skillType" value="REQUIRED" th:field="*{skillType}">
+                        <label class="form-check-label" for="typeRequired">Learn</label>
+                    </div>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillType')}" th:errors="*{skillType}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="skillLevel" class="form-label">Skill Level</label>
+                    <select class="form-select" id="skillLevel" th:field="*{skillLevel}">
+                        <option value="" disabled selected>-- Select your level --</option>
+                        <option value="BEGINNER">Beginner</option>
+                        <option value="INTERMEDIATE">Intermediate</option>
+                        <option value="ADVANCED">Advanced</option>
+                    </select>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillLevel')}" th:errors="*{skillLevel}"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="description" class="form-label">Description (Optional)</label>
+                    <textarea class="form-control" id="description" rows="3" th:field="*{description}" placeholder="Details about your experience or learning goals..."></textarea>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/profile}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4" th:text="${skillDto.id != null ? 'Update Skill' : 'Add Skill'}">Save</button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

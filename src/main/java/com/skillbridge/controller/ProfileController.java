@@ -19,9 +19,11 @@ import java.security.Principal;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final com.skillbridge.service.SkillService skillService;
 
-    public ProfileController(ProfileService profileService) {
+    public ProfileController(ProfileService profileService, com.skillbridge.service.SkillService skillService) {
         this.profileService = profileService;
+        this.skillService = skillService;
     }
 
     @GetMapping
@@ -31,6 +33,7 @@ public class ProfileController {
         }
         ProfileDto profile = profileService.getProfileByUsername(principal.getName());
         model.addAttribute("profile", profile);
+        model.addAttribute("skills", skillService.getStudentSkills(principal.getName()));
         return "profile/view";
     }
 

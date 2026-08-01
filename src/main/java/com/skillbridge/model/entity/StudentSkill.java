@@ -29,6 +29,9 @@ public class StudentSkill extends BaseEntity {
     @Column(name = "skill_level", nullable = false)
     private SkillLevel skillLevel;
 
+    @Column(length = 300)
+    private String description;
+
     public Student getStudent() { return student; }
     public void setStudent(Student student) { this.student = student; }
 
@@ -40,4 +43,7 @@ public class StudentSkill extends BaseEntity {
 
     public SkillLevel getSkillLevel() { return skillLevel; }
     public void setSkillLevel(SkillLevel skillLevel) { this.skillLevel = skillLevel; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 }

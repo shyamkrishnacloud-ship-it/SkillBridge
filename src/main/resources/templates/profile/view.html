@@ -81,6 +81,41 @@
     </div>
 </div>
 
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">My Skills</h4>
+            <a th:href="@{/profile/skills/add}" class="btn btn-light btn-sm">Add Skill</a>
+        </div>
+        <div class="card-body">
+            <div th:if="${#lists.isEmpty(skills)}" class="alert alert-info mb-0">
+                You haven't added any skills yet.
+            </div>
+            
+            <div th:unless="${#lists.isEmpty(skills)}" class="row row-cols-1 row-cols-md-2 g-4">
+                <div class="col" th:each="skill : ${skills}">
+                    <div class="card h-100 border-info">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title text-primary mb-0" th:text="${skill.skillName}">Skill Name</h5>
+                                <span class="badge" th:classappend="${skill.skillType.name() == 'OFFERED' ? 'bg-success' : 'bg-warning text-dark'}" th:text="${skill.skillType.name() == 'OFFERED' ? 'Teach' : 'Learn'}">Type</span>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted" th:text="${skill.skillCategory}">Category</h6>
+                            <p class="card-text mb-1"><strong>Level:</strong> <span th:text="${skill.skillLevel}">Level</span></p>
+                            <p class="card-text small text-secondary" th:if="${skill.description}" th:text="${skill.description}">Description</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-2">
+                            <a th:href="@{'/profile/skills/' + ${skill.id} + '/edit'}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form th:action="@{'/profile/skills/' + ${skill.id} + '/delete'}" method="post" onsubmit="return confirm('Are you sure you want to delete this skill?');" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
