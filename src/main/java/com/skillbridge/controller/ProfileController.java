@@ -41,7 +41,8 @@ public class ProfileController {
     }
 
     @GetMapping("/{username}")
-    public String viewPublicProfile(@org.springframework.web.bind.annotation.PathVariable String username, Model model, Principal principal) {
+    public String viewPublicProfile(@org.springframework.web.bind.annotation.PathVariable String username, Model model,
+            Principal principal) {
         if (principal == null) {
             return "redirect:/login";
         }
@@ -51,7 +52,8 @@ public class ProfileController {
             model.addAttribute("skills", skillService.getStudentSkills(username));
             return "profile/public-view";
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -67,10 +69,10 @@ public class ProfileController {
 
     @PostMapping("/edit")
     public String updateProfile(@Valid @ModelAttribute("profileDto") ProfileDto profileDto,
-                                BindingResult bindingResult,
-                                Principal principal,
-                                RedirectAttributes redirectAttributes,
-                                Model model) {
+            BindingResult bindingResult,
+            Principal principal,
+            RedirectAttributes redirectAttributes,
+            Model model) {
         if (principal == null) {
             return "redirect:/login";
         }
