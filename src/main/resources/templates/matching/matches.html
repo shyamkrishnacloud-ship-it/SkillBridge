@@ -17,18 +17,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" th:href="@{/profile}">SkillBridge</a>
-        <div class="d-flex align-items-center">
-            <a th:href="@{/matches}" class="btn btn-primary me-3">Find Matches</a>
-            <a th:href="@{/profile}" class="btn btn-outline-light me-2">Profile</a>
-            <form th:action="@{/logout}" method="post" class="m-0">
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="container mt-5 mb-5">
     <h2 class="mb-4">Find Skill Exchange Partners</h2>
@@ -109,7 +98,7 @@
                     
                     <div class="d-grid gap-2 mt-auto">
                         <a th:href="@{'/profile/' + ${match.username}}" class="btn btn-outline-primary">View Profile</a>
-                        <button class="btn btn-success" disabled>Send Swap Request</button>
+                        <a th:href="@{'/requests/send/' + ${match.username}}" class="btn btn-success">Send Swap Request</a>
                     </div>
                 </div>
             </div>

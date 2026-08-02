@@ -30,6 +30,9 @@ public class SwapRequest extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RequestStatus status = RequestStatus.PENDING;
+    
+    @Column(length = 500)
+    private String message;
 
     private boolean completedByRequester = false;
     private boolean completedByReceiver = false;
@@ -54,4 +57,7 @@ public class SwapRequest extends BaseEntity {
 
     public boolean isCompletedByReceiver() { return completedByReceiver; }
     public void setCompletedByReceiver(boolean completedByReceiver) { this.completedByReceiver = completedByReceiver; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 }

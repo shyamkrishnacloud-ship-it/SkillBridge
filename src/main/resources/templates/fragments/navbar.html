@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/profile}">SkillBridge</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/profile}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/profile/skills}">My Skills</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/matches}">Find Matches</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="requestsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            My Requests
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="requestsDropdown">
+                            <li><a class="dropdown-item" th:href="@{/requests/incoming}">Incoming Requests</a></li>
+                            <li><a class="dropdown-item" th:href="@{/requests/outgoing}">Outgoing Requests</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center mt-2 mt-lg-0">
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="btn btn-danger btn-sm px-3">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+</body>
+</html>

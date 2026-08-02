@@ -23,6 +23,14 @@ public class SkillController {
         this.skillService = skillService;
     }
 
+    @GetMapping
+    public String viewSkills(Model model, Principal principal) {
+        if (principal == null) return "redirect:/login";
+        List<SkillDto> skills = skillService.getStudentSkills(principal.getName());
+        model.addAttribute("skills", skills);
+        return "profile/skills";
+    }
+
     @GetMapping("/add")
     public String showAddSkillForm(Model model, Principal principal) {
         if (principal == null) return "redirect:/login";
@@ -51,7 +59,7 @@ public class SkillController {
             return "profile/skill-form";
         }
 
-        return "redirect:/profile";
+        return "redirect:/profile/skills";
     }
 
     @GetMapping("/{id}/edit")
@@ -64,7 +72,7 @@ public class SkillController {
             return "profile/skill-form";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error loading skill: " + e.getMessage());
-            return "redirect:/profile";
+            return "redirect:/profile/skills";
         }
     }
 
@@ -89,7 +97,7 @@ public class SkillController {
             return "profile/skill-form";
         }
 
-        return "redirect:/profile";
+        return "redirect:/profile/skills";
     }
 
     @PostMapping("/{id}/delete")
@@ -103,6 +111,6 @@ public class SkillController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error deleting skill: " + e.getMessage());
         }
 
-        return "redirect:/profile";
+        return "redirect:/profile/skills";
     }
 }

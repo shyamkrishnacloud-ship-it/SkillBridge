@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Swap Request - SkillBridge</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .form-container { max-width: 600px; margin-top: 50px; margin-bottom: 50px; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card-header { background-color: #198754; color: white; border-radius: 10px 10px 0 0 !important; padding: 20px; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container form-container">
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+    
+    <div class="card">
+        <div class="card-header text-center">
+            <h3 class="mb-0">Send Swap Request to <span th:text="${receiverUsername}"></span></h3>
+        </div>
+        <div class="card-body p-4">
+            <form th:action="@{/requests/send}" th:object="${creationDto}" method="post">
+                <input type="hidden" th:field="*{receiverUsername}">
+                
+                <div class="mb-4">
+                    <label for="offeredSkillId" class="form-label fw-bold">Select One of Your Offered Skills (They will learn this)</label>
+                    <select class="form-select" id="offeredSkillId" th:field="*{offeredSkillId}" required>
+                        <option value="" selected disabled>-- Select a skill you teach --</option>
+                        <option th:each="skill : ${myOfferedSkills}" th:value="${skill.id}" th:text="${skill.skillName} + ' (' + ${skill.skillLevel} + ')'"></option>
+                    </select>
+                    <div class="text-danger mt-1" th:if="${#fields.hasErrors('offeredSkillId')}" th:errors="*{offeredSkillId}"></div>
+                    <div th:if="${#lists.isEmpty(myOfferedSkills)}" class="text-danger mt-2 small">
+                        You have not offered any skills yet. <a th:href="@{/profile/skills}">Add an offered skill first.</a>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="requestedSkillId" class="form-label fw-bold">Select One of Their Required Skills (You will learn this)</label>
+                    <select class="form-select" id="requestedSkillId" th:field="*{requestedSkillId}" required>
+                        <option value="" selected disabled>-- Select a skill they want to learn --</option>
+                        <option th:each="skill : ${receiverRequiredSkills}" th:value="${skill.id}" th:text="${skill.skillName} + ' (' + ${skill.skillLevel} + ')'"></option>
+                    </select>
+                    <div class="text-danger mt-1" th:if="${#fields.hasErrors('requestedSkillId')}" th:errors="*{requestedSkillId}"></div>
+                    <div th:if="${#lists.isEmpty(receiverRequiredSkills)}" class="text-danger mt-2 small">
+                        This user hasn't requested any skills. They might just want to teach.
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="message" class="form-label fw-bold">Optional Message</label>
+                    <textarea class="form-control" id="message" rows="3" th:field="*{message}" placeholder="Introduce yourself and propose a time..."></textarea>
+                    <div class="text-danger mt-1" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success btn-lg" th:disabled="${#lists.isEmpty(myOfferedSkills) or #lists.isEmpty(receiverRequiredSkills)}">Send Request</button>
+                    <a th:href="@{/profile/{username}(username=${receiverUsername})}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

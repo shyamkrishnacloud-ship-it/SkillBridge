@@ -18,4 +18,15 @@ public interface SwapRequestRepository extends JpaRepository<SwapRequest, Long> 
     List<SwapRequest> findByReceiverIdAndStatusAndIsActiveTrue(Long receiverId, RequestStatus status);
     List<SwapRequest> findByRequesterIdAndIsActiveTrue(Long requesterId);
     List<SwapRequest> findByReceiverIdAndIsActiveTrue(Long receiverId);
+
+    List<SwapRequest> findByRequester_UsernameAndIsActiveTrueOrderByCreatedAtDesc(String username);
+    List<SwapRequest> findByReceiver_UsernameAndIsActiveTrueOrderByCreatedAtDesc(String username);
+    
+    boolean existsByRequesterAndReceiverAndOfferedSkillAndRequestedSkillAndStatusAndIsActiveTrue(
+            com.skillbridge.model.entity.Student requester,
+            com.skillbridge.model.entity.Student receiver,
+            com.skillbridge.model.entity.StudentSkill offeredSkill,
+            com.skillbridge.model.entity.StudentSkill requestedSkill,
+            RequestStatus status
+    );
 }

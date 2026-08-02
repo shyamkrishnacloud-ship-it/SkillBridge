@@ -13,4 +13,5 @@ public interface StudentSkillRepository extends JpaRepository<StudentSkill, Long
     List<StudentSkill> findByStudentIdAndSkillTypeAndIsActiveTrue(Long studentId, SkillType skillType);
     List<StudentSkill> findByStudentIdAndIsActiveTrue(Long studentId);
     Optional<StudentSkill> findByStudentIdAndSkillIdAndSkillTypeAndIsActiveTrue(Long studentId, Long skillId, SkillType skillType);
+    Optional<StudentSkill> findByStudentIdAndSkillIdAndSkillType(Long studentId, Long skillId, SkillType skillType);
 }

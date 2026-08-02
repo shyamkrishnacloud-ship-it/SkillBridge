@@ -69,10 +69,19 @@ public class SkillServiceImpl implements SkillService {
                     return skillRepository.save(newSkill);
                 });
 
-        studentSkillRepository.findByStudentIdAndSkillIdAndSkillTypeAndIsActiveTrue(student.getId(), skill.getId(), skillDto.getSkillType())
-                .ifPresent(existing -> {
-                    throw new IllegalArgumentException("You already have this skill with the same type");
-                });
+        java.util.Optional<StudentSkill> existingSkillOpt = studentSkillRepository.findByStudentIdAndSkillIdAndSkillType(student.getId(), skill.getId(), skillDto.getSkillType());
+        if (existingSkillOpt.isPresent()) {
+            StudentSkill existing = existingSkillOpt.get();
+            if (existing.isActive()) {
+                throw new IllegalArgumentException("You already have this skill with the same type");
+            } else {
+                existing.setActive(true);
+                existing.setSkillLevel(skillDto.getSkillLevel());
+                existing.setDescription(skillDto.getDescription());
+                studentSkillRepository.save(existing);
+                return;
+            }
+        }
 
         StudentSkill studentSkill = new StudentSkill();
         studentSkill.setStudent(student);

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Skills - SkillBridge</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Skills</h2>
+        <a th:href="@{/profile/skills/add}" class="btn btn-primary">Add Skill</a>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${#lists.isEmpty(skills)}" class="alert alert-info">
+        You haven't added any skills yet. <a th:href="@{/profile/skills/add}" class="alert-link">Add one now!</a>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(skills)}">
+        <!-- Offered Skills -->
+        <h4 class="mb-3 text-success">Offered Skills (I can teach)</h4>
+        <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
+            <div th:each="skill : ${skills}" th:if="${skill.skillType.name() == 'OFFERED'}" class="col">
+                <div class="card h-100 border-success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title text-success mb-0" th:text="${skill.skillName}">Skill Name</h5>
+                            <span class="badge bg-success" th:text="${skill.skillCategory}">Category</span>
+                        </div>
+                        <p class="card-text mb-1"><strong>Level:</strong> <span th:text="${skill.skillLevel}">Level</span></p>
+                        <p class="card-text small text-secondary" th:if="${skill.description}" th:text="${skill.description}">Description</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-2">
+                        <a th:href="@{'/profile/skills/' + ${skill.id} + '/edit'}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form th:action="@{'/profile/skills/' + ${skill.id} + '/delete'}" method="post" onsubmit="return confirm('Are you sure you want to delete this skill?');" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.size(#lists.toList(skills.?[skillType.name() == 'OFFERED'])) == 0}" class="col-12">
+                <p class="text-muted fst-italic">You haven't added any skills to teach.</p>
+            </div>
+        </div>
+
+        <!-- Required Skills -->
+        <h4 class="mb-3 text-info">Required Skills (I want to learn)</h4>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div th:each="skill : ${skills}" th:if="${skill.skillType.name() == 'REQUIRED'}" class="col">
+                <div class="card h-100 border-info">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title text-info mb-0" th:text="${skill.skillName}">Skill Name</h5>
+                            <span class="badge bg-info text-dark" th:text="${skill.skillCategory}">Category</span>
+                        </div>
+                        <p class="card-text mb-1"><strong>Level:</strong> <span th:text="${skill.skillLevel}">Level</span></p>
+                        <p class="card-text small text-secondary" th:if="${skill.description}" th:text="${skill.description}">Description</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-2">
+                        <a th:href="@{'/profile/skills/' + ${skill.id} + '/edit'}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form th:action="@{'/profile/skills/' + ${skill.id} + '/delete'}" method="post" onsubmit="return confirm('Are you sure you want to delete this skill?');" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.size(#lists.toList(skills.?[skillType.name() == 'REQUIRED'])) == 0}" class="col-12">
+                <p class="text-muted fst-italic">You haven't requested any skills to learn.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.security.Principal;
 
 @Controller
@@ -48,7 +51,7 @@ public class ProfileController {
             model.addAttribute("skills", skillService.getStudentSkills(username));
             return "profile/public-view";
         } catch (Exception e) {
-            return "redirect:/matches"; // redirect back if user not found
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
     }
 
