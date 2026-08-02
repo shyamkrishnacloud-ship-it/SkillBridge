@@ -22,14 +22,15 @@ public class SkillServiceImpl implements SkillService {
     private final StudentRepository studentRepository;
 
     public SkillServiceImpl(StudentSkillRepository studentSkillRepository,
-                            SkillRepository skillRepository,
-                            StudentRepository studentRepository) {
+            SkillRepository skillRepository,
+            StudentRepository studentRepository) {
         this.studentSkillRepository = studentSkillRepository;
         this.skillRepository = skillRepository;
         this.studentRepository = studentRepository;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SkillDto> getStudentSkills(String username) {
         Student student = studentRepository.findByUsernameAndIsActiveTrue(username)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
@@ -69,7 +70,8 @@ public class SkillServiceImpl implements SkillService {
                     return skillRepository.save(newSkill);
                 });
 
-        java.util.Optional<StudentSkill> existingSkillOpt = studentSkillRepository.findByStudentIdAndSkillIdAndSkillType(student.getId(), skill.getId(), skillDto.getSkillType());
+        java.util.Optional<StudentSkill> existingSkillOpt = studentSkillRepository
+                .findByStudentIdAndSkillIdAndSkillType(student.getId(), skill.getId(), skillDto.getSkillType());
         if (existingSkillOpt.isPresent()) {
             StudentSkill existing = existingSkillOpt.get();
             if (existing.isActive()) {
@@ -116,7 +118,9 @@ public class SkillServiceImpl implements SkillService {
                     return skillRepository.save(newSkill);
                 });
 
-        studentSkillRepository.findByStudentIdAndSkillIdAndSkillTypeAndIsActiveTrue(student.getId(), skill.getId(), skillDto.getSkillType())
+        studentSkillRepository
+                .findByStudentIdAndSkillIdAndSkillTypeAndIsActiveTrue(student.getId(), skill.getId(),
+                        skillDto.getSkillType())
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new IllegalArgumentException("You already have this skill with the same type");

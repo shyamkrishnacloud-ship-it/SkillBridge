@@ -97,8 +97,8 @@
                     </div>
                     
                     <div class="d-grid gap-2 mt-auto">
-                        <a th:href="@{'/profile/' + ${match.username}}" class="btn btn-outline-primary">View Profile</a>
-                        <a th:href="@{'/requests/send/' + ${match.username}}" class="btn btn-success">Send Swap Request</a>
+                        <a th:href="@{/profile/{u}(u=${match.username})}" class="btn btn-outline-primary">View Profile</a>
+                        <a th:href="@{/requests/send/{u}(u=${match.username})}" class="btn btn-success">Send Swap Request</a>
                     </div>
                 </div>
             </div>

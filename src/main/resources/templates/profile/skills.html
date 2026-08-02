@@ -56,7 +56,7 @@
                     </div>
                 </div>
             </div>
-            <div th:if="${#lists.size(#lists.toList(skills.?[skillType.name() == 'OFFERED'])) == 0}" class="col-12">
+            <div th:if="${#lists.isEmpty(skills.?[skillType.name() == 'OFFERED'])}" class="col-12">
                 <p class="text-muted fst-italic">You haven't added any skills to teach.</p>
             </div>
         </div>
@@ -82,7 +82,7 @@
                     </div>
                 </div>
             </div>
-            <div th:if="${#lists.size(#lists.toList(skills.?[skillType.name() == 'REQUIRED'])) == 0}" class="col-12">
+            <div th:if="${#lists.isEmpty(skills.?[skillType.name() == 'REQUIRED'])}" class="col-12">
                 <p class="text-muted fst-italic">You haven't requested any skills to learn.</p>
             </div>
         </div>
