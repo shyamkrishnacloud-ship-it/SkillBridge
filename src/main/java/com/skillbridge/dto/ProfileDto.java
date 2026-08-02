@@ -23,6 +23,8 @@ public class ProfileDto {
 
     private MultipartFile profilePicture;
     private String existingProfilePicturePath;
+    
+    private Double averageRating;
 
     // Getters and Setters
     public String getUsername() { return username; }
@@ -51,4 +53,7 @@ public class ProfileDto {
 
     public String getExistingProfilePicturePath() { return existingProfilePicturePath; }
     public void setExistingProfilePicturePath(String existingProfilePicturePath) { this.existingProfilePicturePath = existingProfilePicturePath; }
+
+    public Double getAverageRating() { return averageRating; }
+    public void setAverageRating(Double averageRating) { this.averageRating = averageRating; }
 }

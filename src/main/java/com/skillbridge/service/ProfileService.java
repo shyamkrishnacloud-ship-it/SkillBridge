@@ -38,6 +38,7 @@ public class ProfileService {
         dto.setAvailabilityMode(student.getAvailabilityMode());
         dto.setPreferredTime(student.getPreferredTime());
         dto.setExistingProfilePicturePath(student.getProfilePicturePath());
+        dto.setAverageRating(student.getAverageRating() != null ? student.getAverageRating() : 0.0);
 
         return dto;
     }

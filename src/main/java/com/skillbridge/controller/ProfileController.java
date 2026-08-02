@@ -37,6 +37,21 @@ public class ProfileController {
         return "profile/view";
     }
 
+    @GetMapping("/{username}")
+    public String viewPublicProfile(@org.springframework.web.bind.annotation.PathVariable String username, Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        try {
+            ProfileDto profile = profileService.getProfileByUsername(username);
+            model.addAttribute("profile", profile);
+            model.addAttribute("skills", skillService.getStudentSkills(username));
+            return "profile/public-view";
+        } catch (Exception e) {
+            return "redirect:/matches"; // redirect back if user not found
+        }
+    }
+
     @GetMapping("/edit")
     public String showEditForm(Model model, Principal principal) {
         if (principal == null) {
