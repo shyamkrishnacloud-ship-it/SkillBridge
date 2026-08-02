@@ -97,8 +97,8 @@ public class SwapRequestController {
             redirectAttributes.addFlashAttribute("successMessage", "Swap request sent successfully!");
             return "redirect:/requests/outgoing";
         } catch (IllegalArgumentException | IllegalStateException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return prepareSendFormWithError(creationDto, principal.getName(), model);
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/requests/send/" + creationDto.getReceiverUsername();
         }
     }
 

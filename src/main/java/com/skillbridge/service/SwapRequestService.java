@@ -12,4 +12,5 @@ public interface SwapRequestService {
     void completeRequest(Long requestId, String username);
     List<SwapRequestDto> getIncomingRequests(String username);
     List<SwapRequestDto> getOutgoingRequests(String username);
+    boolean hasActiveSwapRequest(String user1, String user2);
 }

@@ -23,10 +23,14 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final com.skillbridge.service.SkillService skillService;
+    private final com.skillbridge.service.SwapRequestService swapRequestService;
 
-    public ProfileController(ProfileService profileService, com.skillbridge.service.SkillService skillService) {
+    public ProfileController(ProfileService profileService, 
+                             com.skillbridge.service.SkillService skillService,
+                             com.skillbridge.service.SwapRequestService swapRequestService) {
         this.profileService = profileService;
         this.skillService = skillService;
+        this.swapRequestService = swapRequestService;
     }
 
     @GetMapping
@@ -50,6 +54,14 @@ public class ProfileController {
             ProfileDto profile = profileService.getProfileByUsername(username);
             model.addAttribute("profile", profile);
             model.addAttribute("skills", skillService.getStudentSkills(username));
+            model.addAttribute("isSelf", principal.getName().equals(username));
+            
+            if (!principal.getName().equals(username)) {
+                model.addAttribute("hasActiveRequest", swapRequestService.hasActiveSwapRequest(principal.getName(), username));
+            } else {
+                model.addAttribute("hasActiveRequest", false);
+            }
+            
             return "profile/public-view";
         } catch (Exception e) {
             e.printStackTrace();

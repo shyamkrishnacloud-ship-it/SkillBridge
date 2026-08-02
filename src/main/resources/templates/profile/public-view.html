@@ -63,8 +63,13 @@
                 </div>
             </div>
             
-            <div class="mt-4">
-                <a th:href="@{/requests/send/{username}(username=${profile.username})}" class="btn btn-success px-4 py-2">Send Swap Request</a>
+            <div class="mt-4" th:unless="${isSelf}">
+                <div th:if="${hasActiveRequest}">
+                    <a th:href="@{/requests/incoming}" class="btn btn-secondary px-4 py-2">View Existing Request</a>
+                </div>
+                <div th:unless="${hasActiveRequest}">
+                    <a th:href="@{/requests/send/{username}(username=${profile.username})}" class="btn btn-success px-4 py-2">Send Swap Request</a>
+                </div>
             </div>
         </div>
     </div>

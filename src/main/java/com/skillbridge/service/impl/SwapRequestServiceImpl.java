@@ -44,6 +44,10 @@ public class SwapRequestServiceImpl implements SwapRequestService {
         Student receiver = studentRepository.findByUsernameAndIsActiveTrue(creationDto.getReceiverUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Receiver not found or inactive"));
 
+        if (hasActiveSwapRequest(senderUsername, receiver.getUsername())) {
+            throw new IllegalArgumentException("You already have an active swap request with this user.");
+        }
+
         StudentSkill offeredSkill = studentSkillRepository.findById(creationDto.getOfferedSkillId())
                 .filter(com.skillbridge.model.entity.BaseEntity::isActive)
                 .orElseThrow(() -> new IllegalArgumentException("Offered skill not found or inactive"));
@@ -149,6 +153,22 @@ public class SwapRequestServiceImpl implements SwapRequestService {
     public List<SwapRequestDto> getOutgoingRequests(String username) {
         return swapRequestRepository.findByRequester_UsernameAndIsActiveTrueOrderByCreatedAtDesc(username)
                 .stream().map(this::mapToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean hasActiveSwapRequest(String username1, String username2) {
+        Student user1 = studentRepository.findByUsernameAndIsActiveTrue(username1).orElse(null);
+        Student user2 = studentRepository.findByUsernameAndIsActiveTrue(username2).orElse(null);
+        
+        if (user1 == null || user2 == null) {
+            return false;
+        }
+
+        return swapRequestRepository.existsActiveRequestBetweenUsers(
+                user1.getId(), 
+                user2.getId(), 
+                java.util.Arrays.asList(RequestStatus.PENDING, RequestStatus.ACCEPTED)
+        );
     }
 
     private SwapRequest getActiveRequestById(Long requestId) {

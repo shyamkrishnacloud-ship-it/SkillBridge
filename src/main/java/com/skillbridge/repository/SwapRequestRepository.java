@@ -29,4 +29,12 @@ public interface SwapRequestRepository extends JpaRepository<SwapRequest, Long> 
             com.skillbridge.model.entity.StudentSkill requestedSkill,
             RequestStatus status
     );
+
+    @Query("SELECT COUNT(s) > 0 FROM SwapRequest s WHERE " +
+           "((s.requester.id = :user1Id AND s.receiver.id = :user2Id) OR " +
+           "(s.requester.id = :user2Id AND s.receiver.id = :user1Id)) " +
+           "AND s.status IN :statuses AND s.isActive = true")
+    boolean existsActiveRequestBetweenUsers(@Param("user1Id") Long user1Id,
+                                            @Param("user2Id") Long user2Id,
+                                            @Param("statuses") List<RequestStatus> statuses);
 }
