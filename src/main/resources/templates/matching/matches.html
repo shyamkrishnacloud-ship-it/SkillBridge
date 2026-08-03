@@ -78,9 +78,13 @@
                         </div>
                         <div class="text-end">
                             <div class="match-score" th:text="${match.matchScore + '%'}">0%</div>
-                            <span class="badge bg-warning text-dark">
-                                ★ <span th:text="${#numbers.formatDecimal(match.averageRating, 1, 1)}">0.0</span>
-                            </span>
+                            <div>
+                                <span class="badge bg-warning text-dark">
+                                    ★ <span th:text="${#numbers.formatDecimal(match.averageRating, 1, 1)}">0.0</span>
+                                </span>
+                                <br>
+                                <small class="text-muted" th:text="|${match.reviewCount} reviews|">0 reviews</small>
+                            </div>
                         </div>
                     </div>
                     

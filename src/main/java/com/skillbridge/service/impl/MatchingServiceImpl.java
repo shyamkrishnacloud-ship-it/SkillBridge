@@ -20,9 +20,11 @@ import java.util.stream.Collectors;
 public class MatchingServiceImpl implements MatchingService {
 
     private final StudentRepository studentRepository;
+    private final com.skillbridge.repository.ReviewRepository reviewRepository;
 
-    public MatchingServiceImpl(StudentRepository studentRepository) {
+    public MatchingServiceImpl(StudentRepository studentRepository, com.skillbridge.repository.ReviewRepository reviewRepository) {
         this.studentRepository = studentRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     @Override
@@ -114,7 +116,12 @@ public class MatchingServiceImpl implements MatchingService {
             dto.setUsername(student.getUsername());
             dto.setDepartment(student.getDepartment());
             dto.setSemester(student.getSemester());
-            dto.setAverageRating(student.getAverageRating() != null ? student.getAverageRating() : 0.0);
+            Double avg = reviewRepository.calculateAverageRatingByStudentId(student.getId());
+            dto.setAverageRating(avg != null ? avg : 0.0);
+            
+            Integer rCount = reviewRepository.countReviewsByStudentId(student.getId());
+            dto.setReviewCount(rCount != null ? rCount : 0);
+            
             dto.setOfferedSkills(theirOffers);
             dto.setRequiredSkills(theirWants);
             dto.setMatchScore(Math.min(100, score));

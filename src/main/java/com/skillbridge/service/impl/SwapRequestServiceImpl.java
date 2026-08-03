@@ -23,13 +23,16 @@ public class SwapRequestServiceImpl implements SwapRequestService {
     private final SwapRequestRepository swapRequestRepository;
     private final StudentRepository studentRepository;
     private final StudentSkillRepository studentSkillRepository;
+    private final com.skillbridge.repository.ReviewRepository reviewRepository;
 
     public SwapRequestServiceImpl(SwapRequestRepository swapRequestRepository,
                                   StudentRepository studentRepository,
-                                  StudentSkillRepository studentSkillRepository) {
+                                  StudentSkillRepository studentSkillRepository,
+                                  com.skillbridge.repository.ReviewRepository reviewRepository) {
         this.swapRequestRepository = swapRequestRepository;
         this.studentRepository = studentRepository;
         this.studentSkillRepository = studentSkillRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     @Override
@@ -145,14 +148,18 @@ public class SwapRequestServiceImpl implements SwapRequestService {
 
     @Override
     public List<SwapRequestDto> getIncomingRequests(String username) {
+        Student user = studentRepository.findByUsernameAndIsActiveTrue(username).orElse(null);
+        Long userId = user != null ? user.getId() : -1L;
         return swapRequestRepository.findByReceiver_UsernameAndIsActiveTrueOrderByCreatedAtDesc(username)
-                .stream().map(this::mapToDto).collect(Collectors.toList());
+                .stream().map(req -> mapToDto(req, userId)).collect(Collectors.toList());
     }
 
     @Override
     public List<SwapRequestDto> getOutgoingRequests(String username) {
+        Student user = studentRepository.findByUsernameAndIsActiveTrue(username).orElse(null);
+        Long userId = user != null ? user.getId() : -1L;
         return swapRequestRepository.findByRequester_UsernameAndIsActiveTrueOrderByCreatedAtDesc(username)
-                .stream().map(this::mapToDto).collect(Collectors.toList());
+                .stream().map(req -> mapToDto(req, userId)).collect(Collectors.toList());
     }
 
     @Override
@@ -177,7 +184,7 @@ public class SwapRequestServiceImpl implements SwapRequestService {
                 .orElseThrow(() -> new IllegalArgumentException("Request not found"));
     }
 
-    private SwapRequestDto mapToDto(SwapRequest request) {
+    private SwapRequestDto mapToDto(SwapRequest request, Long currentUserId) {
         SwapRequestDto dto = new SwapRequestDto();
         dto.setId(request.getId());
         dto.setSenderUsername(request.getRequester().getUsername());
@@ -189,6 +196,13 @@ public class SwapRequestServiceImpl implements SwapRequestService {
         dto.setStatus(request.getStatus());
         dto.setCreatedDate(request.getCreatedAt());
         dto.setMessage(request.getMessage());
+        
+        if (request.getStatus() == RequestStatus.COMPLETED && currentUserId != -1L) {
+            dto.setHasReviewed(reviewRepository.existsByReviewerIdAndSwapRequestIdAndIsActiveTrue(currentUserId, request.getId()));
+        } else {
+            dto.setHasReviewed(false);
+        }
+        
         return dto;
     }
 }

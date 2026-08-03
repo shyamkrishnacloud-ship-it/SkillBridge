@@ -24,13 +24,16 @@ public class ProfileController {
     private final ProfileService profileService;
     private final com.skillbridge.service.SkillService skillService;
     private final com.skillbridge.service.SwapRequestService swapRequestService;
+    private final com.skillbridge.service.ReviewService reviewService;
 
     public ProfileController(ProfileService profileService, 
                              com.skillbridge.service.SkillService skillService,
-                             com.skillbridge.service.SwapRequestService swapRequestService) {
+                             com.skillbridge.service.SwapRequestService swapRequestService,
+                             com.skillbridge.service.ReviewService reviewService) {
         this.profileService = profileService;
         this.skillService = skillService;
         this.swapRequestService = swapRequestService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping
@@ -61,6 +64,9 @@ public class ProfileController {
             } else {
                 model.addAttribute("hasActiveRequest", false);
             }
+            
+            java.util.List<com.skillbridge.dto.ReviewDto> allReviews = reviewService.getReviewsForUser(username);
+            model.addAttribute("recentReviews", allReviews.size() > 5 ? allReviews.subList(0, 5) : allReviews);
             
             return "profile/public-view";
         } catch (Exception e) {

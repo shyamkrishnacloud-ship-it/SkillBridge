@@ -14,6 +14,7 @@ public class SwapRequestDto {
     private String message;
     private RequestStatus status;
     private LocalDateTime createdDate;
+    private boolean hasReviewed;
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -45,4 +46,7 @@ public class SwapRequestDto {
 
     public LocalDateTime getCreatedDate() { return createdDate; }
     public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
+
+    public boolean isHasReviewed() { return hasReviewed; }
+    public void setHasReviewed(boolean hasReviewed) { this.hasReviewed = hasReviewed; }
 }

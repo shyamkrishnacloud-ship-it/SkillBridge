@@ -69,7 +69,6 @@
             </div>
         </div>
     </div>
-</div>
 
     <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -86,6 +85,25 @@
                     <span th:text="${skill.skillName}"></span>
                     <small class="ms-1" th:text="'(' + ${skill.skillType.name() == 'OFFERED' ? 'Teach' : 'Learn'} + ')'"></small>
                 </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Stats Card -->
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">My Reviews</h4>
+            <a th:href="@{/profile/{username}/reviews(username=${profile.username})}" class="btn btn-light btn-sm">View Reviews</a>
+        </div>
+        <div class="card-body d-flex align-items-center">
+            <div class="display-6 fw-bold text-success me-3">
+                <span th:text="${#numbers.formatDecimal(profile.averageRating, 1, 1)}">0.0</span>
+            </div>
+            <div>
+                <div class="text-warning fs-5">
+                    <span th:each="i : ${#numbers.sequence(1, 5)}" th:text="${i <= profile.averageRating ? '★' : '☆'}"></span>
+                </div>
+                <small class="text-muted" th:text="|Total reviews received: ${profile.reviewCount}|">0 reviews</small>
             </div>
         </div>
     </div>

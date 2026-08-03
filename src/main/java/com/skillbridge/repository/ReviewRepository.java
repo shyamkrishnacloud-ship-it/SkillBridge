@@ -14,5 +14,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reviewee.id = :studentId AND r.isActive = true")
     Double calculateAverageRatingByStudentId(@Param("studentId") Long studentId);
     
-    List<Review> findByRevieweeIdAndIsActiveTrue(Long revieweeId);
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.reviewee.id = :studentId AND r.isActive = true")
+    Integer countReviewsByStudentId(@Param("studentId") Long studentId);
+    
+    List<Review> findByRevieweeIdAndIsActiveTrueOrderByCreatedAtDesc(Long revieweeId);
+
+    boolean existsByReviewerIdAndSwapRequestIdAndIsActiveTrue(Long reviewerId, Long swapRequestId);
 }

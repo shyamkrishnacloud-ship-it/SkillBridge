@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${revieweeUsername} + ' Reviews - SkillBridge'">Reviews</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .review-card { border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .star-rating { color: #ffc107; font-size: 1.2rem; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-5 mb-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <a th:href="@{/profile/{username}(username=${revieweeUsername})}" class="text-decoration-none text-dark">
+                <span th:text="${revieweeUsername}"></span>'s Reviews
+            </a>
+        </h2>
+        <div>
+            <a th:href="@{/profile/{username}(username=${revieweeUsername})}" class="btn btn-outline-primary">Back to Profile</a>
+        </div>
+    </div>
+
+    <div class="card mb-4 bg-light border-0 shadow-sm">
+        <div class="card-body text-center">
+            <h4 class="mb-1">Average Rating</h4>
+            <div class="display-6 fw-bold text-success mb-2">
+                <span th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">0.0</span> <small class="text-muted fs-5">/ 5.0</small>
+            </div>
+            <div class="text-muted">
+                Based on <span th:text="${reviewCount}">0</span> reviews
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(reviews)}" class="alert alert-info text-center py-4">
+        <h5>No reviews yet!</h5>
+        <p class="mb-0">This user hasn't received any reviews from completed swap requests.</p>
+    </div>
+
+    <div class="row" th:unless="${#lists.isEmpty(reviews)}">
+        <div class="col-md-6" th:each="review : ${reviews}">
+            <div class="card review-card border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <strong>
+                                <a th:href="@{/profile/{username}(username=${review.reviewerUsername})}" class="text-decoration-none" th:text="${review.reviewerUsername}">Reviewer</a>
+                            </strong>
+                            <br>
+                            <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy, HH:mm')}">Date</small>
+                        </div>
+                        <div class="star-rating">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}" th:text="${i <= review.rating ? '★' : '☆'}"></span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text mt-3 text-secondary" th:if="${review.comment != null and !review.comment.isEmpty()}" th:text="${review.comment}"></p>
+                    <p class="card-text mt-3 text-muted fst-italic" th:unless="${review.comment != null and !review.comment.isEmpty()}">No comment provided.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

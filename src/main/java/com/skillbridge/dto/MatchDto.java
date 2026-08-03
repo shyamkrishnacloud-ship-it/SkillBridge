@@ -7,6 +7,7 @@ public class MatchDto {
     private String department;
     private Integer semester;
     private Double averageRating;
+    private Integer reviewCount;
     private List<String> offeredSkills;
     private List<String> requiredSkills;
     private int matchScore;
@@ -41,6 +42,14 @@ public class MatchDto {
 
     public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
     }
 
     public List<String> getOfferedSkills() {

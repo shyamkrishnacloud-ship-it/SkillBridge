@@ -25,6 +25,8 @@ public class ProfileDto {
     private String existingProfilePicturePath;
     
     private Double averageRating;
+    private Integer reviewCount;
+    private Integer completedSwaps;
 
     // Getters and Setters
     public String getUsername() { return username; }
@@ -56,4 +58,10 @@ public class ProfileDto {
 
     public Double getAverageRating() { return averageRating; }
     public void setAverageRating(Double averageRating) { this.averageRating = averageRating; }
+
+    public Integer getReviewCount() { return reviewCount; }
+    public void setReviewCount(Integer reviewCount) { this.reviewCount = reviewCount; }
+
+    public Integer getCompletedSwaps() { return completedSwaps; }
+    public void setCompletedSwaps(Integer completedSwaps) { this.completedSwaps = completedSwaps; }
 }

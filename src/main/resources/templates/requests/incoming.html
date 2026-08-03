@@ -73,6 +73,9 @@
                         <input type="hidden" name="source" value="incoming">
                         <button type="submit" class="btn btn-info text-white w-100">Mark as Completed</button>
                     </form>
+                    
+                    <a th:if="${req.status.name() == 'COMPLETED' and !req.hasReviewed}" th:href="@{/reviews/new/{id}(id=${req.id})}" class="btn btn-warning w-100">Leave Review</a>
+                    <button th:if="${req.status.name() == 'COMPLETED' and req.hasReviewed}" class="btn btn-secondary w-100" disabled>Review Submitted</button>
                 </div>
             </div>
         </div>

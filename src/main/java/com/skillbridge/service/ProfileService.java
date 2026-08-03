@@ -19,10 +19,16 @@ import java.util.UUID;
 public class ProfileService {
 
     private final StudentRepository studentRepository;
+    private final com.skillbridge.repository.ReviewRepository reviewRepository;
+    private final com.skillbridge.repository.SwapRequestRepository swapRequestRepository;
     private final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
-    public ProfileService(StudentRepository studentRepository) {
+    public ProfileService(StudentRepository studentRepository, 
+                          com.skillbridge.repository.ReviewRepository reviewRepository,
+                          com.skillbridge.repository.SwapRequestRepository swapRequestRepository) {
         this.studentRepository = studentRepository;
+        this.reviewRepository = reviewRepository;
+        this.swapRequestRepository = swapRequestRepository;
     }
 
     public ProfileDto getProfileByUsername(String username) {
@@ -38,7 +44,14 @@ public class ProfileService {
         dto.setAvailabilityMode(student.getAvailabilityMode());
         dto.setPreferredTime(student.getPreferredTime());
         dto.setExistingProfilePicturePath(student.getProfilePicturePath());
-        dto.setAverageRating(student.getAverageRating() != null ? student.getAverageRating() : 0.0);
+        Double avg = reviewRepository.calculateAverageRatingByStudentId(student.getId());
+        dto.setAverageRating(avg != null ? avg : 0.0);
+        
+        Integer reviewCount = reviewRepository.countReviewsByStudentId(student.getId());
+        dto.setReviewCount(reviewCount != null ? reviewCount : 0);
+        
+        Integer completedSwaps = swapRequestRepository.countCompletedSwapsByStudentId(student.getId());
+        dto.setCompletedSwaps(completedSwaps != null ? completedSwaps : 0);
 
         return dto;
     }
