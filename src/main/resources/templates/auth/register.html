@@ -4,91 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - SkillBridge</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
         .register-container {
             max-width: 500px;
-            margin-top: 50px;
-            margin-bottom: 50px;
+            margin-top: 5vh;
         }
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .card-header {
-            background-color: #0d6efd;
-            color: white;
-            border-radius: 10px 10px 0 0 !important;
+        .auth-header {
             text-align: center;
-            padding: 20px;
+            padding: 30px 20px;
+            border-radius: 12px 12px 0 0;
+            background: linear-gradient(135deg, var(--sb-primary), #3B82F6);
+            color: white;
         }
-        .btn-primary {
-            width: 100%;
-            padding: 10px;
-        }
-        .error-message {
-            color: #dc3545;
-            font-size: 0.875em;
-            margin-top: 0.25rem;
+        .auth-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-<div class="container register-container">
-    <div class="card">
-        <div class="card-header">
-            <h3>SkillBridge</h3>
-            <p class="mb-0">Create an Account</p>
+<div class="container register-container mb-5">
+    <div class="sb-card overflow-hidden">
+        <div class="auth-header">
+            <i class="bi bi-person-plus auth-icon"></i>
+            <h2 class="fw-bold mb-1">Create Account</h2>
+            <p class="mb-0 text-white-50">Join the SkillBridge Community</p>
         </div>
-        <div class="card-body p-4">
-            
-            <form th:action="@{/register}" th:object="${registerDto}" method="post">
+        <div class="card-body p-4 p-md-5 bg-white">
+            <form th:action="@{/register}" th:object="${studentDto}" method="post">
                 
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" th:field="*{username}" 
-                           th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" autofocus>
-                    <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                <div class="mb-4">
+                    <label for="username" class="form-label fw-medium text-muted">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                        <input type="text" class="form-control bg-light border-start-0 ps-0" id="username" th:field="*{username}" placeholder="Choose a username" required autofocus>
+                    </div>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
                 </div>
-                
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="email" th:field="*{email}"
-                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
-                    <div class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+                <div class="mb-4">
+                    <label for="email" class="form-label fw-medium text-muted">Email address</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                        <input type="email" class="form-control bg-light border-start-0 ps-0" id="email" th:field="*{email}" placeholder="name@example.com" required>
+                    </div>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                 </div>
-                
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" th:field="*{password}"
-                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
-                    <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-medium text-muted">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                        <input type="password" class="form-control bg-light border-start-0 ps-0" id="password" th:field="*{password}" placeholder="Create a strong password" required>
+                    </div>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                 </div>
                 
                 <div class="mb-4">
-                    <label for="confirmPassword" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}"
-                           th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''">
-                    <div class="error-message" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+                    <label for="confirmPassword" class="form-label fw-medium text-muted">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-lock text-muted"></i></span>
+                        <input type="password" class="form-control bg-light border-start-0 ps-0" id="confirmPassword" th:field="*{confirmPassword}" placeholder="Repeat your password" required>
+                    </div>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
                 </div>
-                
-                <button type="submit" class="btn btn-primary">Sign Up</button>
+
+                <button type="submit" class="btn btn-sb-primary w-100 py-2 fs-5 mt-2">Sign Up</button>
             </form>
+            
             <div class="mt-4 text-center">
-                <p>Already have an account? <a th:href="@{/login}" class="text-decoration-none">Sign in here</a></p>
-                <p><a th:href="@{/}" class="text-decoration-none text-muted">Back to Home</a></p>
+                <p class="text-muted mb-2">Already have an account? <a th:href="@{/login}" class="text-decoration-none fw-semibold">Sign in here</a></p>
+                <a th:href="@{/}" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

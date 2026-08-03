@@ -5,42 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partner Details - SkillBridge</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        body { background-color: #f8f9fa; }
-        .profile-card {
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            background: white;
-            padding: 30px;
+        .profile-container { max-width: 700px; margin-top: 30px; }
+        .hero-banner {
+            height: 120px;
+            background: linear-gradient(135deg, var(--sb-primary), #3B82F6);
+            border-radius: 12px 12px 0 0;
+            position: relative;
         }
-        .profile-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #0d6efd;
+        .profile-img { 
+            width: 120px; 
+            height: 120px; 
+            object-fit: cover; 
+            border-radius: 50%; 
+            border: 5px solid var(--sb-surface); 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            margin-top: -60px; 
+            background-color: white; 
+            position: relative;
+            z-index: 10;
         }
         .info-label {
             font-weight: 600;
-            color: #6c757d;
+            color: var(--sb-text-muted);
             text-transform: uppercase;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             margin-bottom: 0.2rem;
+            letter-spacing: 0.5px;
         }
         .info-value {
-            font-size: 1.1rem;
-            color: #212529;
-            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            color: var(--sb-text);
+            font-weight: 500;
         }
         .contact-badge {
-            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            background: var(--sb-primary);
             color: white;
             padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            display: inline-block;
-            margin-bottom: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
         }
     </style>
 </head>
@@ -48,30 +57,30 @@
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="profile-card">
-                <div class="text-center mb-4">
-                    <img th:if="${partner.existingProfilePicturePath != null}" th:src="@{${partner.existingProfilePicturePath}}" alt="Profile Picture" class="profile-img shadow-sm">
-                    <img th:if="${partner.existingProfilePicturePath == null}" src="https://ui-avatars.com/api/?name=User&amp;background=random" alt="Default Profile Picture" class="profile-img shadow-sm">
+<div class="container profile-container mb-5">
+    <div class="sb-card mt-4">
+        <div class="hero-banner"></div>
+        <div class="card-body text-center pt-0 px-4 pb-5">
+            <img th:if="${partner.existingProfilePicturePath != null}" th:src="@{${partner.existingProfilePicturePath}}" alt="Profile Picture" class="profile-img mb-3">
+            <img th:if="${partner.existingProfilePicturePath == null}" src="https://ui-avatars.com/api/?name=User&amp;background=random" alt="Default Profile Picture" class="profile-img mb-3">
 
-                    <h2 class="mt-3 mb-1" th:text="${partner.username}">Username</h2>
-                    <p class="text-muted mb-2" th:text="${(partner.department != null ? partner.department : 'No Department')}">Department</p>
-                    <span class="contact-badge">&#128274; Contact Details</span>
-                </div>
+            <h3 class="fw-bold mb-1" th:text="${partner.username}">Username</h3>
+            <p class="text-muted fw-medium mb-3" th:text="${(partner.department != null ? partner.department : 'No Department')}">Department</p>
+            <div class="mb-4">
+                <span class="contact-badge"><i class="bi bi-person-lines-fill"></i> Private Contact Details</span>
+            </div>
 
-                <hr class="mb-4">
+            <div class="alert alert-primary bg-primary bg-opacity-10 border-0 border-start border-primary border-4 text-start rounded-end-3 mb-4 d-flex align-items-center gap-3" role="alert">
+                <i class="bi bi-info-circle-fill text-primary fs-4"></i>
+                <small class="text-dark fw-medium">These details are only visible to you because you have an accepted or completed skill swap with <strong th:text="${partner.username}">this user</strong>.</small>
+            </div>
 
-                <div class="alert alert-info border-0 mb-4" role="alert">
-                    <small>These details are only visible to you because you have an accepted or completed skill swap with <strong th:text="${partner.username}">this user</strong>.</small>
-                </div>
-
-                <div class="row">
+            <div class="sb-card bg-light border-0 p-4 text-start">
+                <div class="row g-4">
                     <div class="col-sm-6">
                         <div class="info-label">Email Address</div>
                         <div class="info-value">
-                            <a th:href="'mailto:' + ${partner.email}" class="text-decoration-none" th:text="${partner.email}">Email</a>
+                            <a th:href="'mailto:' + ${partner.email}" class="text-decoration-none text-primary" th:text="${partner.email}">Email</a>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -80,20 +89,22 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="info-label">Preferred Time</div>
-                        <div class="info-value" th:text="${partner.preferredTime}">Time</div>
+                        <div class="info-value">
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle px-2 py-1" th:text="${partner.preferredTime}">Time</span>
+                        </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="info-label">Availability</div>
                         <div class="info-value">
-                            <span class="badge" th:classappend="${partner.availabilityMode != null and partner.availabilityMode.name() == 'ONLINE' ? 'bg-success' : (partner.availabilityMode != null and partner.availabilityMode.name() == 'HYBRID' ? 'bg-info' : 'bg-secondary')}" th:text="${partner.availabilityMode}">Mode</span>
+                            <span class="badge px-2 py-1" th:classappend="${partner.availabilityMode != null and partner.availabilityMode.name() == 'ONLINE' ? 'bg-success bg-opacity-10 text-success border border-success-subtle' : (partner.availabilityMode != null and partner.availabilityMode.name() == 'HYBRID' ? 'bg-info bg-opacity-10 text-info-emphasis border border-info-subtle' : 'bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle')}" th:text="${partner.availabilityMode}">Mode</span>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="text-center mt-4 d-flex gap-2 justify-content-center">
-                    <a th:href="@{/profile/{username}(username=${partner.username})}" class="btn btn-outline-primary">View Public Profile</a>
-                    <a th:href="@{/requests/incoming}" class="btn btn-secondary">Back to Requests</a>
-                </div>
+            <div class="text-center mt-5 d-flex gap-3 justify-content-center">
+                <a th:href="@{/profile/{username}(username=${partner.username})}" class="btn btn-outline-primary fw-medium rounded-pill px-4"><i class="bi bi-person-badge me-2"></i>View Public Profile</a>
+                <a th:href="@{/requests/incoming}" class="btn btn-light border fw-medium rounded-pill px-4"><i class="bi bi-arrow-left me-2"></i>Back to Requests</a>
             </div>
         </div>
     </div>
