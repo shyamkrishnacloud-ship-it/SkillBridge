@@ -3,148 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile - SkillBridge</title>
+    <title>Edit Profile — SkillBridge</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        .edit-container { max-width: 850px; margin-top: 40px; }
-        .form-label {
-            font-weight: 500;
-            color: var(--sb-text-muted);
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
+        .edit-page { max-width: 760px; }
+        .sb-label { display:block; font-size:0.875rem; font-weight:500; color:var(--sb-text); margin-bottom:0.375rem; }
+        .sb-label .optional { color:var(--sb-text-muted); font-weight:400; }
+        .sb-input {
+            width:100%; padding:0.6875rem 0.875rem;
+            border:1px solid var(--sb-border); border-radius:9px;
+            font-size:0.9375rem; color:var(--sb-text); background:#fff;
+            font-family:'Inter',sans-serif;
+            transition:border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        .form-control, .form-select {
-            padding: 0.6rem 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--sb-border);
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--sb-primary);
-            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
-        }
-        .section-title {
-            color: var(--sb-primary);
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        .sb-input:focus { outline:none; border-color:var(--sb-primary); box-shadow:0 0 0 3px rgba(37,99,235,0.12); }
+        .sb-input::placeholder { color:var(--sb-text-light); }
+        .sb-input:disabled, .sb-input[readonly] { background:var(--sb-bg); color:var(--sb-text-muted); cursor:not-allowed; }
+        .sb-select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 0.875rem center; padding-right:2.5rem; }
+        .section-divider { display:flex; align-items:center; gap:0.75rem; margin:2rem 0 1.5rem; }
+        .section-divider-line { flex:1; height:1px; background:var(--sb-border); }
+        .section-divider-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--sb-text-muted); white-space:nowrap; display:flex; align-items:center; gap:0.375rem; }
+        .readonly-badge { display:inline-flex; align-items:center; gap:0.25rem; font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:0.125rem 0.5rem; border-radius:9999px; background:var(--sb-bg); color:var(--sb-text-muted); border:1px solid var(--sb-border); vertical-align:middle; margin-left:0.375rem; }
+        .phone-prefix { display:flex; align-items:center; border:1px solid var(--sb-border); border-radius:9px 0 0 9px; border-right:none; padding:0.6875rem 0.875rem; background:var(--sb-bg); color:var(--sb-text-muted); font-size:0.9375rem; font-weight:500; white-space:nowrap; }
+        .phone-input { border-radius:0 9px 9px 0 !important; }
+        .field-err { font-size:0.8rem; color:#DC2626; margin-top:0.25rem; display:flex; align-items:center; gap:0.25rem; }
+        .hint-text { font-size:0.8rem; color:var(--sb-text-muted); margin-top:0.3rem; }
+        .avatar-preview { width:72px; height:72px; border-radius:50%; object-fit:cover; border:3px solid var(--sb-border); }
+        .file-input { border:1px dashed var(--sb-border); border-radius:9px; padding:0.875rem; background:var(--sb-bg); width:100%; font-family:'Inter',sans-serif; font-size:0.875rem; color:var(--sb-text-muted); cursor:pointer; transition:border-color 0.15s ease; }
+        .file-input:hover { border-color:var(--sb-primary); }
+        .avail-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.625rem; }
+        .avail-option input { display:none; }
+        .avail-option label { display:flex; flex-direction:column; align-items:center; gap:0.25rem; padding:0.75rem 0.5rem; border:1px solid var(--sb-border); border-radius:9px; cursor:pointer; font-size:0.8rem; font-weight:500; color:var(--sb-text-muted); transition:all 0.15s ease; text-align:center; }
+        .avail-option label i { font-size:1.125rem; }
+        .avail-option input:checked + label { border-color:var(--sb-primary); background:var(--sb-primary-light); color:var(--sb-primary); font-weight:600; }
+        .avail-option label:hover { border-color:var(--sb-border-hover); background:var(--sb-bg); }
+        .time-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.625rem; }
+        .time-option input { display:none; }
+        .time-option label { display:flex; flex-direction:column; align-items:center; gap:0.25rem; padding:0.75rem 0.5rem; border:1px solid var(--sb-border); border-radius:9px; cursor:pointer; font-size:0.8rem; font-weight:500; color:var(--sb-text-muted); transition:all 0.15s ease; text-align:center; }
+        .time-option label i { font-size:1.125rem; }
+        .time-option input:checked + label { border-color:var(--sb-accent); background:var(--sb-accent-light); color:var(--sb-accent); font-weight:600; }
+        .time-option label:hover { border-color:var(--sb-border-hover); background:var(--sb-bg); }
     </style>
 </head>
 <body>
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container edit-container mb-5">
-    <div class="sb-card">
-        <div class="card-header bg-white border-bottom pt-4 pb-3">
-            <h4 class="fw-bold mb-0"><i class="bi bi-pencil-square text-primary me-2"></i>Edit Profile</h4>
-        </div>
-        <div class="card-body p-4 p-md-5">
-            
-            <div th:if="${errorMessage}" class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2" role="alert">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                <span th:text="${errorMessage}"></span>
+<div class="container sb-page">
+    <div class="edit-page mx-auto">
+
+        <!-- Back link -->
+        <a th:href="@{/profile}"
+           style="display:inline-flex;align-items:center;gap:0.375rem;font-size:0.8125rem;color:var(--sb-text-muted);text-decoration:none;margin-bottom:1.5rem;">
+            <i class="bi bi-arrow-left"></i> Back to Profile
+        </a>
+
+        <div class="sb-card">
+            <div class="sb-card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-pencil-square" style="color:var(--sb-primary);font-size:1.125rem;"></i>
+                    <h1 style="font-size:1rem;font-weight:700;margin:0;">Edit Profile</h1>
+                </div>
             </div>
+            <div class="sb-card-body">
 
-            <form th:action="@{/profile/edit}" th:object="${profileDto}" method="post" class="needs-validation" enctype="multipart/form-data">
-                
-                <div class="mb-5">
-                    <h5 class="section-title border-bottom pb-2"><i class="bi bi-person-badge"></i> Account Details <span class="badge bg-light text-muted border fw-normal ms-2 text-uppercase" style="font-size: 0.7rem;">Read-only</span></h5>
-                    <div class="row g-4">
+                <!-- Error -->
+                <div th:if="${errorMessage}" class="sb-alert sb-alert-danger mb-4">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+
+                <form th:action="@{/profile/edit}" th:object="${profileDto}" method="post" enctype="multipart/form-data">
+
+                    <!-- ── Account Details (read-only) ── -->
+                    <div class="section-divider">
+                        <div class="section-divider-label">
+                            <i class="bi bi-person-badge"></i> Account Details
+                            <span class="readonly-badge"><i class="bi bi-lock-fill"></i> Read-only</span>
+                        </div>
+                        <div class="section-divider-line"></div>
+                    </div>
+
+                    <div class="row g-4 mb-2">
                         <div class="col-md-6">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control bg-light text-muted" th:field="*{username}" readonly>
+                            <label class="sb-label">Username</label>
+                            <input type="text" class="sb-input" th:field="*{username}" readonly>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control bg-light text-muted" th:field="*{email}" readonly>
+                            <label class="sb-label">Email Address</label>
+                            <input type="email" class="sb-input" th:field="*{email}" readonly>
                         </div>
                         <div class="col-md-6">
-                            <label for="phoneNumber" class="form-label">Phone Number</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light text-muted border-end-0" id="phone-prefix">+91</span>
-                                <input type="tel" class="form-control border-start-0 ps-0" id="phoneNumber" th:field="*{phoneNumber}"
-                                       placeholder="10-digit mobile number" maxlength="10" pattern="[0-9]{10}" aria-describedby="phone-prefix">
+                            <label for="phoneNumber" class="sb-label">
+                                Phone Number <span class="optional">(Optional)</span>
+                            </label>
+                            <div class="d-flex">
+                                <span class="phone-prefix">+91</span>
+                                <input type="tel" id="phoneNumber" class="sb-input phone-input"
+                                       th:field="*{phoneNumber}"
+                                       placeholder="10-digit mobile number"
+                                       maxlength="10" pattern="[0-9]{10}">
                             </div>
-                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
-                            <small class="text-muted"><i class="bi bi-shield-lock me-1"></i>Shared only with accepted partners.</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-5">
-                    <h5 class="section-title border-bottom pb-2"><i class="bi bi-mortarboard"></i> Academic & Personal Info</h5>
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <label for="department" class="form-label">Department</label>
-                            <input type="text" class="form-control" id="department" th:field="*{department}" placeholder="e.g. Computer Science">
-                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="semester" class="form-label">Semester</label>
-                            <input type="number" min="1" max="10" class="form-control" id="semester" th:field="*{semester}" placeholder="e.g. 5">
-                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('semester')}" th:errors="*{semester}"></div>
+                            <div class="field-err" th:if="${#fields.hasErrors('phoneNumber')}">
+                                <i class="bi bi-exclamation-circle"></i>
+                                <span th:errors="*{phoneNumber}"></span>
+                            </div>
+                            <div class="hint-text"><i class="bi bi-shield-lock me-1"></i>Only visible to accepted skill exchange partners.</div>
                         </div>
                     </div>
 
-                    <div class="mb-2">
-                        <label for="bio" class="form-label">Bio</label>
-                        <textarea class="form-control" id="bio" rows="4" th:field="*{bio}" placeholder="Tell the community a bit about yourself, what you want to learn, and what you can teach..."></textarea>
-                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}"></div>
+                    <!-- ── Academic & Personal Info ── -->
+                    <div class="section-divider">
+                        <div class="section-divider-label"><i class="bi bi-mortarboard"></i> Academic &amp; Personal</div>
+                        <div class="section-divider-line"></div>
                     </div>
-                </div>
 
-                <div class="mb-5">
-                    <h5 class="section-title border-bottom pb-2"><i class="bi bi-sliders"></i> Preferences</h5>
-                    <div class="row g-4">
+                    <div class="row g-4 mb-2">
                         <div class="col-md-6">
-                            <label for="availabilityMode" class="form-label">Availability Mode</label>
-                            <select class="form-select" id="availabilityMode" th:field="*{availabilityMode}">
-                                <option value="ONLINE">Online</option>
-                                <option value="OFFLINE">Offline</option>
-                                <option value="BOTH">Both</option>
-                            </select>
+                            <label for="department" class="sb-label">Department</label>
+                            <input type="text" id="department" class="sb-input" th:field="*{department}"
+                                   placeholder="e.g. Computer Science">
+                            <div class="field-err" th:if="${#fields.hasErrors('department')}">
+                                <i class="bi bi-exclamation-circle"></i><span th:errors="*{department}"></span>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="preferredTime" class="form-label">Preferred Time</label>
-                            <select class="form-select" id="preferredTime" th:field="*{preferredTime}">
-                                <option value="WEEKDAY">Weekday</option>
-                                <option value="WEEKEND">Weekend</option>
-                                <option value="ANYTIME">Anytime</option>
-                            </select>
+                            <label for="semester" class="sb-label">Semester</label>
+                            <input type="number" id="semester" class="sb-input" th:field="*{semester}"
+                                   placeholder="e.g. 5" min="1" max="10">
+                            <div class="field-err" th:if="${#fields.hasErrors('semester')}">
+                                <i class="bi bi-exclamation-circle"></i><span th:errors="*{semester}"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="bio" class="sb-label">
+                                Bio <span class="optional">(Optional)</span>
+                            </label>
+                            <textarea id="bio" class="sb-input" rows="3" th:field="*{bio}"
+                                      style="resize:vertical;"
+                                      placeholder="Tell the community about yourself — what you want to learn and what you can teach…"></textarea>
+                            <div class="field-err" th:if="${#fields.hasErrors('bio')}">
+                                <i class="bi bi-exclamation-circle"></i><span th:errors="*{bio}"></span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mb-5">
-                    <h5 class="section-title border-bottom pb-2"><i class="bi bi-camera"></i> Profile Picture</h5>
-                    <div class="d-flex align-items-center gap-4">
-                        <div>
-                            <img th:if="${profileDto.existingProfilePicturePath != null}" th:src="@{${profileDto.existingProfilePicturePath}}" alt="Current Avatar" class="rounded-circle shadow-sm border border-2 border-white" style="width: 80px; height: 80px; object-fit: cover;">
-                            <img th:if="${profileDto.existingProfilePicturePath == null}" src="https://ui-avatars.com/api/?name=User&amp;background=random" alt="Default Profile Picture" class="rounded-circle shadow-sm border border-2 border-white" style="width: 80px; height: 80px; object-fit: cover;">
+                    <!-- ── Preferences ── -->
+                    <div class="section-divider">
+                        <div class="section-divider-label"><i class="bi bi-sliders"></i> Preferences</div>
+                        <div class="section-divider-line"></div>
+                    </div>
+
+                    <div class="row g-4 mb-2">
+                        <div class="col-md-6">
+                            <label class="sb-label">Availability Mode</label>
+                            <div class="avail-grid">
+                                <div class="avail-option">
+                                    <input type="radio" id="avail-online" name="availabilityMode" value="ONLINE" th:field="*{availabilityMode}">
+                                    <label for="avail-online">
+                                        <i class="bi bi-wifi"></i> Online
+                                    </label>
+                                </div>
+                                <div class="avail-option">
+                                    <input type="radio" id="avail-offline" name="availabilityMode" value="OFFLINE" th:field="*{availabilityMode}">
+                                    <label for="avail-offline">
+                                        <i class="bi bi-geo-alt-fill"></i> Offline
+                                    </label>
+                                </div>
+                                <div class="avail-option">
+                                    <input type="radio" id="avail-both" name="availabilityMode" value="BOTH" th:field="*{availabilityMode}">
+                                    <label for="avail-both">
+                                        <i class="bi bi-arrow-left-right"></i> Both
+                                    </label>
+                                </div>
+                            </div>
                         </div>
+                        <div class="col-md-6">
+                            <label class="sb-label">Preferred Time</label>
+                            <div class="time-grid">
+                                <div class="time-option">
+                                    <input type="radio" id="time-weekday" name="preferredTime" value="WEEKDAY" th:field="*{preferredTime}">
+                                    <label for="time-weekday">
+                                        <i class="bi bi-briefcase-fill"></i> Weekday
+                                    </label>
+                                </div>
+                                <div class="time-option">
+                                    <input type="radio" id="time-weekend" name="preferredTime" value="WEEKEND" th:field="*{preferredTime}">
+                                    <label for="time-weekend">
+                                        <i class="bi bi-sun-fill"></i> Weekend
+                                    </label>
+                                </div>
+                                <div class="time-option">
+                                    <input type="radio" id="time-anytime" name="preferredTime" value="ANYTIME" th:field="*{preferredTime}">
+                                    <label for="time-anytime">
+                                        <i class="bi bi-clock-fill"></i> Anytime
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── Profile Picture ── -->
+                    <div class="section-divider">
+                        <div class="section-divider-label"><i class="bi bi-camera-fill"></i> Profile Picture</div>
+                        <div class="section-divider-line"></div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-4 mb-2">
+                        <img th:if="${profileDto.existingProfilePicturePath != null}"
+                             th:src="@{${profileDto.existingProfilePicturePath}}"
+                             alt="Current Avatar" class="avatar-preview">
+                        <img th:unless="${profileDto.existingProfilePicturePath != null}"
+                             th:src="@{'https://ui-avatars.com/api/?name=' + ${profileDto.username} + '&background=2563EB&color=fff&bold=true&size=72'}"
+                             alt="Default Avatar" class="avatar-preview">
                         <div class="flex-grow-1">
-                            <label for="profilePicture" class="form-label mb-1">Upload New Picture</label>
-                            <input class="form-control form-control-sm" type="file" id="profilePicture" name="profilePicture" accept="image/png, image/jpeg">
-                            <small class="text-muted d-block mt-1">Leave blank to keep existing picture. Supported formats: PNG, JPG.</small>
+                            <label for="profilePicture" class="sb-label">Upload New Picture</label>
+                            <input type="file" id="profilePicture" name="profilePicture"
+                                   accept="image/png, image/jpeg" class="file-input">
+                            <div class="hint-text">Leave empty to keep current picture. PNG or JPG, max 2MB.</div>
                         </div>
                     </div>
-                </div>
 
-                <div class="d-flex justify-content-end gap-3 pt-3 border-top">
-                    <a th:href="@{/profile}" class="btn btn-light border px-4 py-2 fw-medium text-dark rounded-pill shadow-sm">Cancel</a>
-                    <button type="submit" class="btn btn-sb-primary px-4 py-2 rounded-pill shadow-sm"><i class="bi bi-check2-circle me-1"></i> Save Changes</button>
-                </div>
-            </form>
-            
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-end gap-3 pt-5 mt-2" style="border-top:1px solid var(--sb-border);">
+                        <a th:href="@{/profile}" class="btn-sb-outline">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn-sb-primary">
+                            <i class="bi bi-check2-circle"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: active-nav-script}"></script>
 </body>
 </html>

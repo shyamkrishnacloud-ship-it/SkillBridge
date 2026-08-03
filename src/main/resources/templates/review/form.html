@@ -3,93 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Review - SkillBridge</title>
+    <title>Leave a Review — SkillBridge</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        .form-container { max-width: 600px; margin-top: 40px; margin-bottom: 50px; }
-        .form-label {
-            font-weight: 500;
-            color: var(--sb-text-muted);
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
+        .review-page { max-width: 560px; }
+        .sb-label { display:block;font-size:0.875rem;font-weight:500;color:var(--sb-text);margin-bottom:0.375rem; }
+        .sb-input {
+            width:100%;padding:0.6875rem 0.875rem;
+            border:1px solid var(--sb-border);border-radius:9px;
+            font-size:0.9375rem;color:var(--sb-text);background:#fff;
+            font-family:'Inter',sans-serif;
+            transition:border-color 0.15s ease,box-shadow 0.15s ease;
         }
-        .form-control, .form-select {
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--sb-border);
+        .sb-input:focus { outline:none;border-color:var(--sb-primary);box-shadow:0 0 0 3px rgba(37,99,235,0.12); }
+        .sb-input::placeholder { color:var(--sb-text-light); }
+        .field-err { font-size:0.8rem;color:#DC2626;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem; }
+
+        /* Star rating UI */
+        .star-picker { display:flex; gap:0.375rem; justify-content:center; margin-bottom:0.5rem; }
+        .star-picker input[type="radio"] { display:none; }
+        .star-picker label {
+            font-size:2.25rem; cursor:pointer;
+            color:#E2E8F0; transition:color 0.1s ease, transform 0.1s ease;
+            line-height:1;
         }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--sb-primary);
-            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+        .star-picker label:hover,
+        .star-picker label:hover ~ label,
+        .star-picker input:checked ~ label { color:#F59E0B; }
+        /* RTL trick for hover */
+        .star-picker { flex-direction:row-reverse; }
+        .star-picker label:hover,
+        .star-picker label:hover ~ label { color:#F59E0B; }
+        .star-picker input:checked ~ label,
+        .star-picker input:checked + label { color:#F59E0B; }
+        /* simpler approach: JS-free star highlight */
+        .star-picker label:hover { transform:scale(1.15); }
+        .rating-caption { font-size:0.875rem; color:var(--sb-text-muted); text-align:center; min-height:1.4em; }
+        .rating-wrapper {
+            background:linear-gradient(135deg, rgba(245,158,11,0.04), rgba(245,158,11,0.02));
+            border:1px solid rgba(245,158,11,0.2);
+            border-radius:var(--sb-radius-lg); padding:2rem;
+            text-align:center; margin-bottom:1.5rem;
         }
-        .rating-select-wrapper {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(245, 158, 11, 0.02));
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 12px;
-            padding: 24px;
-        }
+        /* Fallback select (hidden behind the star picker, shown if JS disabled) */
+        .star-select-fallback { display:none; }
+        .hint-text { font-size:0.8rem;color:var(--sb-text-muted);margin-top:0.3rem; }
     </style>
 </head>
 <body>
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container form-container">
-    <div th:if="${errorMessage}" class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2" role="alert">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <span th:text="${errorMessage}"></span>
-    </div>
-    
-    <div class="sb-card border-top border-4 border-warning border-start-0 border-end-0 border-bottom-0">
-        <div class="card-header bg-white border-bottom pt-4 pb-3 text-center">
-            <div class="d-inline-flex justify-content-center align-items-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3" style="width: 60px; height: 60px;">
-                <i class="bi bi-star-fill fs-2"></i>
-            </div>
-            <h4 class="mb-1 fw-bold text-dark">Leave a Review</h4>
-            <p class="text-muted mb-0">Share your experience with your skill exchange partner</p>
+<div class="container sb-page">
+    <div class="review-page mx-auto">
+
+        <!-- Back -->
+        <a th:href="@{/requests/incoming}"
+           style="display:inline-flex;align-items:center;gap:0.375rem;font-size:0.8125rem;color:var(--sb-text-muted);text-decoration:none;margin-bottom:1.5rem;">
+            <i class="bi bi-arrow-left"></i> Back to Requests
+        </a>
+
+        <!-- Error -->
+        <div th:if="${errorMessage}" class="sb-alert sb-alert-danger mb-4">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${errorMessage}"></span>
         </div>
-        <div class="card-body p-4 p-md-5">
-            <form th:action="@{/reviews/new/{id}(id=${reviewDto.swapRequestId})}" th:object="${reviewDto}" method="post">
-                
-                <!-- Hidden field to preserve the swapRequestId across POST round-trips -->
-                <input type="hidden" th:field="*{swapRequestId}">
-                
-                <div class="mb-4 rating-select-wrapper text-center">
-                    <label class="form-label fw-bold text-dark mb-3 d-block">How would you rate this experience?</label>
-                    <select class="form-select text-center fw-medium text-warning-emphasis bg-white mx-auto" style="max-width: 300px;" th:field="*{rating}" required>
-                        <option value="" selected disabled>-- Select a rating --</option>
-                        <option value="5">★★★★★ (5 - Excellent)</option>
-                        <option value="4">★★★★☆ (4 - Good)</option>
-                        <option value="3">★★★☆☆ (3 - Average)</option>
-                        <option value="2">★★☆☆☆ (2 - Poor)</option>
-                        <option value="1">★☆☆☆☆ (1 - Terrible)</option>
-                    </select>
-                    <div class="text-danger mt-2 small" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
-                </div>
 
-                <div class="mb-5">
-                    <label for="comment" class="form-label d-flex justify-content-between">
-                        <span><i class="bi bi-chat-text me-1"></i> Review Comment <span class="fw-normal text-muted small">(Optional)</span></span>
-                    </label>
-                    <textarea class="form-control" id="comment" rows="4" th:field="*{comment}" placeholder="How was your experience learning/teaching with this student? What did you like?"></textarea>
-                    <div class="d-flex justify-content-between mt-1">
-                        <div class="text-danger small" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></div>
-                        <small class="text-muted ms-auto">Max 500 characters</small>
+        <div class="sb-card">
+            <div class="sb-card-header" style="justify-content:center;flex-direction:column;align-items:center;padding:2rem 1.5rem 1.25rem;">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(245,158,11,0.1);color:#F59E0B;display:flex;align-items:center;justify-content:center;font-size:1.625rem;margin-bottom:1rem;">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <h1 style="font-size:1.25rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;">Leave a Review</h1>
+                <p style="font-size:0.9rem;color:var(--sb-text-muted);margin:0;">Share your experience with your skill exchange partner</p>
+            </div>
+            <div class="sb-card-body">
+                <form th:action="@{/reviews/new/{id}(id=${reviewDto.swapRequestId})}" th:object="${reviewDto}" method="post">
+                    <input type="hidden" th:field="*{swapRequestId}">
+
+                    <!-- Star Rating -->
+                    <div class="rating-wrapper">
+                        <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--sb-text-muted);margin-bottom:1rem;">
+                            How would you rate this experience?
+                        </div>
+
+                        <!-- Visual star picker (forwards to a hidden select) -->
+                        <div class="star-picker" id="starPicker">
+                            <input type="radio" id="s5" name="_starPick" value="5">
+                            <label for="s5" title="5 — Excellent"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="s4" name="_starPick" value="4">
+                            <label for="s4" title="4 — Good"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="s3" name="_starPick" value="3">
+                            <label for="s3" title="3 — Average"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="s2" name="_starPick" value="2">
+                            <label for="s2" title="2 — Poor"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="s1" name="_starPick" value="1">
+                            <label for="s1" title="1 — Terrible"><i class="bi bi-star-fill"></i></label>
+                        </div>
+                        <div class="rating-caption" id="ratingCaption">Click a star to rate</div>
+
+                        <!-- Actual bound select (synced by JS, visible if JS is off) -->
+                        <div style="margin-top:1rem;">
+                            <select class="sb-input" th:field="*{rating}" id="ratingSelect" required
+                                    style="max-width:280px;margin:0 auto;display:block;text-align:center;">
+                                <option value="" disabled selected>— Select a rating —</option>
+                                <option value="5">★★★★★ (5 — Excellent)</option>
+                                <option value="4">★★★★☆ (4 — Good)</option>
+                                <option value="3">★★★☆☆ (3 — Average)</option>
+                                <option value="2">★★☆☆☆ (2 — Poor)</option>
+                                <option value="1">★☆☆☆☆ (1 — Terrible)</option>
+                            </select>
+                        </div>
+                        <div class="field-err justify-content-center mt-2" th:if="${#fields.hasErrors('rating')}">
+                            <i class="bi bi-exclamation-circle"></i><span th:errors="*{rating}"></span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="d-flex flex-column flex-sm-row gap-3 pt-3 border-top">
-                    <a th:href="@{/requests/incoming}" class="btn btn-light border py-3 px-4 fw-medium text-dark rounded-pill flex-grow-1 text-center transition-hover">Cancel</a>
-                    <button type="submit" class="btn btn-sb-primary py-3 px-4 fw-bold rounded-pill shadow-sm flex-grow-1">
-                        <i class="bi bi-send-check-fill me-2"></i> Submit Review
-                    </button>
-                </div>
-            </form>
+                    <!-- Comment -->
+                    <div class="mb-5">
+                        <label for="comment" class="sb-label">
+                            Review Comment
+                            <span style="color:var(--sb-text-muted);font-weight:400;">(Optional)</span>
+                        </label>
+                        <textarea id="comment" class="sb-input" rows="4" th:field="*{comment}"
+                                  style="resize:vertical;"
+                                  placeholder="How was your learning experience? Would you recommend this partner?"></textarea>
+                        <div class="d-flex justify-content-between mt-1">
+                            <div class="field-err" th:if="${#fields.hasErrors('comment')}">
+                                <i class="bi bi-exclamation-circle"></i><span th:errors="*{comment}"></span>
+                            </div>
+                            <div class="hint-text ms-auto">Max 500 characters</div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex flex-column flex-sm-row gap-3 pt-4" style="border-top:1px solid var(--sb-border);">
+                        <a th:href="@{/requests/incoming}" class="btn-sb-outline flex-grow-1" style="justify-content:center;">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn-sb-primary flex-grow-1" style="justify-content:center;background:#D97706;box-shadow:0 1px 2px rgba(217,119,6,0.2);">
+                            <i class="bi bi-send-check-fill"></i> Submit Review
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sync visual star picker → real rating select
+    const captions = { '5':'Excellent', '4':'Good', '3':'Average', '2':'Poor', '1':'Terrible' };
+    const captionEl = document.getElementById('ratingCaption');
+    const ratingSelect = document.getElementById('ratingSelect');
+    const starInputs = document.querySelectorAll('#starPicker input[type="radio"]');
+
+    // Hide the fallback select when JS is available
+    ratingSelect.style.display = 'none';
+
+    starInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            ratingSelect.value = this.value;
+            captionEl.textContent = this.value + ' — ' + (captions[this.value] || '');
+            captionEl.style.color = '#D97706';
+            captionEl.style.fontWeight = '600';
+        });
+    });
+
+    // Restore state if form has existing value (validation round-trip)
+    const existingVal = ratingSelect.value;
+    if (existingVal) {
+        const matching = document.getElementById('s' + existingVal);
+        if (matching) matching.checked = true;
+        captionEl.textContent = existingVal + ' — ' + (captions[existingVal] || '');
+        captionEl.style.color = '#D97706';
+        captionEl.style.fontWeight = '600';
+    }
+</script>
+<script th:replace="~{fragments/navbar :: active-nav-script}"></script>
 </body>
 </html>

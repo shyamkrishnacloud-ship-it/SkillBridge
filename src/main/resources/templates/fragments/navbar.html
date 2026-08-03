@@ -2,89 +2,543 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <style th:fragment="global-styles">
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
+        /* =============================================
+           SKILLBRIDGE DESIGN SYSTEM v2.0
+           ============================================= */
         :root {
             --sb-primary: #2563EB;
             --sb-primary-hover: #1D4ED8;
+            --sb-primary-light: rgba(37, 99, 235, 0.08);
             --sb-accent: #10B981;
+            --sb-accent-hover: #059669;
+            --sb-accent-light: rgba(16, 185, 129, 0.08);
             --sb-bg: #F8FAFC;
             --sb-surface: #FFFFFF;
-            --sb-text: #1E293B;
+            --sb-text: #0F172A;
             --sb-text-muted: #64748B;
+            --sb-text-light: #94A3B8;
             --sb-border: #E2E8F0;
+            --sb-border-hover: #CBD5E1;
+            --sb-shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --sb-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
+            --sb-shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+            --sb-shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.03);
+            --sb-radius: 12px;
+            --sb-radius-lg: 16px;
+            --sb-radius-xl: 20px;
+            --sb-radius-pill: 9999px;
         }
+
+        /* ── Reset & Base ── */
+        *, *::before, *::after { box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--sb-bg);
             color: var(--sb-text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .sb-navbar {
-            background-color: var(--sb-surface);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            padding: 0.75rem 0;
+        /* ── Typography ── */
+        h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.02em; }
+        .sb-page-title {
+            font-size: 1.875rem;
+            font-weight: 800;
+            color: var(--sb-text);
+            letter-spacing: -0.03em;
+            margin-bottom: 0.375rem;
         }
+        .sb-page-subtitle {
+            font-size: 1rem;
+            color: var(--sb-text-muted);
+            font-weight: 400;
+        }
+        .sb-section-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .sb-section-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--sb-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.375rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Navbar ── */
+        .sb-navbar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--sb-border);
+            padding: 0;
+            height: 64px;
+        }
+        .sb-navbar .container { height: 100%; }
+        .sb-navbar .navbar-collapse { height: 100%; }
+        .sb-navbar .navbar-nav { height: 100%; align-items: center; }
+        .sb-navbar .navbar-nav .nav-item { height: 100%; display: flex; align-items: center; }
 
         .sb-brand {
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 1.25rem;
             color: var(--sb-primary) !important;
-            font-size: 1.5rem;
+            text-decoration: none;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            letter-spacing: -0.03em;
+        }
+        .sb-brand .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--sb-primary), #3B82F6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
         }
 
         .sb-nav-link {
             font-weight: 500;
+            font-size: 0.9rem;
             color: var(--sb-text-muted) !important;
-            transition: color 0.2s ease;
-            padding: 0.5rem 1rem !important;
+            text-decoration: none;
+            padding: 0.375rem 0.75rem !important;
+            border-radius: 8px;
+            transition: color 0.15s ease, background-color 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        .sb-nav-link:hover {
+            color: var(--sb-text) !important;
+            background-color: var(--sb-bg);
+        }
+        .sb-nav-link.active {
+            color: var(--sb-primary) !important;
+            background-color: var(--sb-primary-light);
+            font-weight: 600;
+        }
+        .sb-nav-link i { font-size: 1rem; }
+
+        /* Dropdown */
+        .sb-dropdown-menu {
+            border: 1px solid var(--sb-border);
+            border-radius: var(--sb-radius-lg);
+            box-shadow: var(--sb-shadow-xl);
+            padding: 0.5rem;
+            background: var(--sb-surface);
+            min-width: 200px;
+            margin-top: 0.5rem !important;
+        }
+        .sb-dropdown-item {
+            border-radius: 8px;
+            padding: 0.6rem 0.875rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--sb-text-muted);
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .sb-dropdown-item:hover {
+            background: var(--sb-bg);
+            color: var(--sb-text);
+        }
+        .sb-dropdown-item i { width: 16px; text-align: center; font-size: 0.9rem; }
+
+        /* Notification dropdown */
+        .sb-notif-dropdown {
+            width: 360px;
+            max-height: 480px;
+            overflow-y: auto;
+        }
+        .sb-notif-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--sb-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sb-notif-item {
+            padding: 0.875rem 1.25rem;
+            border-bottom: 1px solid var(--sb-border);
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        .sb-notif-item:last-of-type { border-bottom: none; }
+        .sb-notif-item:hover { background-color: var(--sb-bg); }
+        .sb-notif-item.unread { background-color: rgba(37, 99, 235, 0.04); }
+        .sb-notif-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--sb-primary);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 0.3rem;
         }
 
-        .sb-nav-link:hover, .sb-nav-link.active {
-            color: var(--sb-primary) !important;
+        /* Bell button */
+        .sb-bell-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid var(--sb-border);
+            background: var(--sb-surface);
+            color: var(--sb-text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            text-decoration: none;
         }
-        
+        .sb-bell-btn:hover {
+            background: var(--sb-bg);
+            border-color: var(--sb-border-hover);
+            color: var(--sb-text);
+        }
+
+        /* ── Buttons ── */
+        .btn-sb-primary {
+            background: var(--sb-primary);
+            color: #fff !important;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.5rem 1.125rem;
+            transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+            box-shadow: 0 1px 2px rgba(37,99,235,0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            text-decoration: none;
+        }
+        .btn-sb-primary:hover {
+            background: var(--sb-primary-hover);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+            transform: translateY(-1px);
+        }
+        .btn-sb-primary:active { transform: translateY(0); }
+
+        .btn-sb-accent {
+            background: var(--sb-accent);
+            color: #fff !important;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.5rem 1.125rem;
+            transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+            box-shadow: 0 1px 2px rgba(16,185,129,0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            text-decoration: none;
+        }
+        .btn-sb-accent:hover {
+            background: var(--sb-accent-hover);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-sb-outline {
+            background: transparent;
+            color: var(--sb-text) !important;
+            border: 1px solid var(--sb-border);
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.5rem 1.125rem;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            text-decoration: none;
+        }
+        .btn-sb-outline:hover {
+            background: var(--sb-bg);
+            border-color: var(--sb-border-hover);
+        }
+
+        .btn-sb-ghost {
+            background: transparent;
+            color: var(--sb-text-muted) !important;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.5rem 1.125rem;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            text-decoration: none;
+        }
+        .btn-sb-ghost:hover {
+            background: var(--sb-bg);
+            color: var(--sb-text) !important;
+        }
+
+        .btn-sb-danger {
+            background: #FEF2F2;
+            color: #DC2626 !important;
+            border: 1px solid #FECACA;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.5rem 1.125rem;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            text-decoration: none;
+        }
+        .btn-sb-danger:hover {
+            background: #FEE2E2;
+            border-color: #FCA5A5;
+        }
+
+        /* ── Cards ── */
         .sb-card {
             background: var(--sb-surface);
             border: 1px solid var(--sb-border);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: var(--sb-radius-lg);
+            box-shadow: var(--sb-shadow-sm);
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .sb-card:hover { box-shadow: var(--sb-shadow); }
+        .sb-card-hover:hover {
+            box-shadow: var(--sb-shadow-lg);
+            border-color: var(--sb-border-hover);
+            transform: translateY(-2px);
+        }
+        .sb-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--sb-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .sb-card-body { padding: 1.5rem; }
+        .sb-card-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--sb-border);
+            background: var(--sb-bg);
+            border-radius: 0 0 var(--sb-radius-lg) var(--sb-radius-lg);
         }
 
-        .btn-sb-primary {
-            background-color: var(--sb-primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
+        /* ── Stat boxes ── */
+        .sb-stat {
+            background: var(--sb-bg);
+            border: 1px solid var(--sb-border);
+            border-radius: var(--sb-radius);
+            padding: 1.25rem;
+            text-align: center;
+        }
+        .sb-stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.03em;
+        }
+        .sb-stat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--sb-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ── Badges ── */
+        .sb-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid;
+        }
+        .sb-badge-primary { background: var(--sb-primary-light); color: var(--sb-primary); border-color: rgba(37,99,235,0.2); }
+        .sb-badge-success { background: rgba(16,185,129,0.08); color: #059669; border-color: rgba(16,185,129,0.2); }
+        .sb-badge-warning { background: rgba(245,158,11,0.08); color: #D97706; border-color: rgba(245,158,11,0.2); }
+        .sb-badge-danger  { background: rgba(239,68,68,0.08); color: #DC2626; border-color: rgba(239,68,68,0.2); }
+        .sb-badge-neutral { background: var(--sb-bg); color: var(--sb-text-muted); border-color: var(--sb-border); }
+        .sb-badge-info    { background: rgba(6,182,212,0.08); color: #0891B2; border-color: rgba(6,182,212,0.2); }
+
+        /* ── Forms ── */
+        .sb-form-label {
+            font-size: 0.875rem;
             font-weight: 500;
-            padding: 0.5rem 1rem;
-            transition: all 0.2s;
+            color: var(--sb-text);
+            margin-bottom: 0.375rem;
         }
-        
-        .btn-sb-primary:hover {
-            background-color: var(--sb-primary-hover);
-            color: white;
-            transform: translateY(-1px);
-        }
-        
-        .btn-sb-accent {
-            background-color: var(--sb-accent);
-            color: white;
-            border: none;
+        .sb-form-control {
+            border: 1px solid var(--sb-border);
             border-radius: 8px;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            transition: all 0.2s;
+            padding: 0.625rem 0.875rem;
+            font-size: 0.9375rem;
+            color: var(--sb-text);
+            background: var(--sb-surface);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            width: 100%;
         }
-        
-        .btn-sb-accent:hover {
-            background-color: #059669;
-            color: white;
-            transform: translateY(-1px);
+        .sb-form-control:focus {
+            outline: none;
+            border-color: var(--sb-primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+        }
+        .sb-form-control::placeholder { color: var(--sb-text-light); }
+        .sb-input-group { position: relative; }
+        .sb-input-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--sb-text-muted);
+            font-size: 1rem;
+            z-index: 1;
+        }
+        .sb-input-group .sb-form-control { padding-left: 2.625rem; }
+        .sb-section-divider {
+            border: none;
+            border-top: 1px solid var(--sb-border);
+            margin: 2rem 0;
+        }
+
+        /* ── Alert / Flash ── */
+        .sb-alert {
+            border-radius: var(--sb-radius);
+            padding: 0.875rem 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid;
+        }
+        .sb-alert-success { background: rgba(16,185,129,0.06); color: #065F46; border-color: rgba(16,185,129,0.2); }
+        .sb-alert-danger  { background: rgba(239,68,68,0.06);  color: #991B1B; border-color: rgba(239,68,68,0.2); }
+        .sb-alert-info    { background: rgba(6,182,212,0.06);  color: #164E63; border-color: rgba(6,182,212,0.2); }
+
+        /* ── Empty state ── */
+        .sb-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .sb-empty-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: var(--sb-bg);
+            border: 1px solid var(--sb-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.25rem;
+            color: var(--sb-text-muted);
+            margin: 0 auto 1.5rem;
+        }
+        .sb-empty h4 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .sb-empty p { color: var(--sb-text-muted); font-size: 0.9375rem; margin-bottom: 1.5rem; }
+
+        /* ── Skill badges ── */
+        .skill-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.3125rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border: 1px solid;
+        }
+        .skill-pill-teach {
+            background: rgba(16,185,129,0.07);
+            color: #059669;
+            border-color: rgba(16,185,129,0.2);
+        }
+        .skill-pill-learn {
+            background: rgba(245,158,11,0.07);
+            color: #D97706;
+            border-color: rgba(245,158,11,0.2);
+        }
+
+        /* ── Avatar ── */
+        .sb-avatar {
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--sb-primary-light), rgba(16,185,129,0.1));
+            border: 2px solid var(--sb-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--sb-primary);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Utilities ── */
+        .transition-hover { transition: all 0.2s ease; }
+        .hover-lift:hover { transform: translateY(-2px); box-shadow: var(--sb-shadow-lg); }
+        .text-gradient-primary {
+            background: linear-gradient(135deg, var(--sb-primary), #60A5FA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .text-gradient-accent {
+            background: linear-gradient(135deg, var(--sb-accent), #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bg-gradient-primary { background: linear-gradient(135deg, var(--sb-primary), #3B82F6); }
+        .bg-gradient-accent  { background: linear-gradient(135deg, var(--sb-accent), #34D399); }
+        .divider { border: none; border-top: 1px solid var(--sb-border); margin: 0; }
+        .letter-spacing-1 { letter-spacing: 0.05em; }
+
+        /* ── Page layout ── */
+        .sb-page { padding-top: 2.5rem; padding-bottom: 4rem; }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--sb-border-hover); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--sb-text-muted); }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .sb-page-title { font-size: 1.5rem; }
+            .sb-stat-value { font-size: 1.5rem; }
+            .sb-navbar { height: auto; min-height: 64px; }
+            .sb-navbar .navbar-nav { height: auto; padding: 0.75rem 0; gap: 0.25rem; }
+            .sb-navbar .navbar-nav .nav-item { height: auto; }
         }
     </style>
 </head>
@@ -93,78 +547,144 @@
 <div th:fragment="navbar">
     <nav class="navbar navbar-expand-lg sb-navbar sticky-top">
         <div class="container">
-            <a class="navbar-brand sb-brand" th:href="@{/profile}">
-                <i class="bi bi-layers-half"></i> SkillBridge
+            <a class="sb-brand" th:href="@{/profile}">
+                <span class="brand-icon"><i class="bi bi-layers-half"></i></span>
+                SkillBridge
             </a>
-            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="bi bi-list fs-1 text-dark"></i>
+            <button class="navbar-toggler border-0 shadow-none p-1" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="bi bi-list" style="font-size: 1.5rem; color: var(--sb-text-muted);"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 ps-2 ps-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link sb-nav-link" th:href="@{/profile}"><i class="bi bi-person-badge me-1"></i>Profile</a>
+                        <a class="sb-nav-link nav-link" th:href="@{/profile}" id="nav-profile">
+                            <i class="bi bi-person-fill"></i> Profile
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link sb-nav-link" th:href="@{/profile/skills}"><i class="bi bi-tools me-1"></i>My Skills</a>
+                        <a class="sb-nav-link nav-link" th:href="@{/profile/skills}" id="nav-skills">
+                            <i class="bi bi-tools"></i> My Skills
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link sb-nav-link" th:href="@{/matches}"><i class="bi bi-search me-1"></i>Find Matches</a>
+                        <a class="sb-nav-link nav-link" th:href="@{/matches}" id="nav-matches">
+                            <i class="bi bi-people-fill"></i> Find Matches
+                        </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link sb-nav-link dropdown-toggle" href="#" id="requestsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-arrow-left-right me-1"></i>Requests
+                        <a class="sb-nav-link nav-link dropdown-toggle" href="#" id="requestsDropdown"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-arrow-left-right"></i> Requests
                         </a>
-                        <ul class="dropdown-menu border-0 shadow-sm rounded-3" aria-labelledby="requestsDropdown">
-                            <li><a class="dropdown-item py-2" th:href="@{/requests/incoming}"><i class="bi bi-box-arrow-in-down me-2 text-primary"></i>Incoming Requests</a></li>
-                            <li><a class="dropdown-item py-2" th:href="@{/requests/outgoing}"><i class="bi bi-box-arrow-up me-2 text-secondary"></i>Outgoing Requests</a></li>
+                        <ul class="dropdown-menu sb-dropdown-menu border-0" aria-labelledby="requestsDropdown">
+                            <li>
+                                <a class="sb-dropdown-item dropdown-item" th:href="@{/requests/incoming}">
+                                    <i class="bi bi-box-arrow-in-down text-primary"></i>
+                                    <span>Incoming Requests</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="sb-dropdown-item dropdown-item" th:href="@{/requests/outgoing}">
+                                    <i class="bi bi-box-arrow-up text-muted"></i>
+                                    <span>Outgoing Requests</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
-                <div class="d-flex align-items-center gap-3">
+
+                <!-- Right side actions -->
+                <div class="d-flex align-items-center gap-2 pb-2 pb-lg-0">
+
+                    <!-- Notification Bell -->
                     <div class="dropdown">
-                        <a class="nav-link position-relative dropdown-toggle p-2 rounded-circle bg-light" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--sb-text-muted);">
-                            <i class="bi bi-bell fs-5"></i>
-                            <span th:if="${unreadNotificationCount > 0}" 
+                        <a class="sb-bell-btn dropdown-toggle" href="#" id="notificationDropdown"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                           data-bs-offset="0,8" style="text-decoration:none;">
+                            <i class="bi bi-bell"></i>
+                            <span th:if="${unreadNotificationCount > 0}"
                                   class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white"
+                                  style="font-size:0.6rem; padding: 3px 5px;"
                                   th:text="${unreadNotificationCount}">
-                                1
                             </span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 mt-2" aria-labelledby="notificationDropdown" style="width: 320px; max-height: 400px; overflow-y: auto;">
-                            <li><h6 class="dropdown-header d-flex justify-content-between align-items-center py-3 bg-light rounded-top-4 border-bottom">
-                                <span class="fw-bold text-dark mb-0">Notifications</span>
+                        <div class="dropdown-menu sb-dropdown-menu p-0 sb-notif-dropdown"
+                             aria-labelledby="notificationDropdown" style="width:360px;" data-bs-auto-close="outside">
+                            <div class="sb-notif-header">
+                                <div>
+                                    <span class="fw-700 text-dark" style="font-weight:700;">Notifications</span>
+                                    <span th:if="${unreadNotificationCount > 0}"
+                                          class="ms-2 badge rounded-pill bg-primary"
+                                          style="font-size:0.7rem;"
+                                          th:text="${unreadNotificationCount}">
+                                    </span>
+                                </div>
                                 <form th:if="${unreadNotificationCount > 0}" th:action="@{/notifications/read-all}" method="post" class="m-0">
-                                    <button type="submit" class="btn btn-link btn-sm p-0 text-decoration-none fw-medium">Mark all read</button>
+                                    <button type="submit" class="btn btn-link btn-sm p-0 text-decoration-none fw-medium" style="font-size:0.8rem; color:var(--sb-primary);">
+                                        Mark all read
+                                    </button>
                                 </form>
-                            </h6></li>
-                            
-                            <li th:if="${#lists.isEmpty(latestNotifications)}">
-                                <span class="dropdown-item text-muted text-center py-4">No new notifications</span>
-                            </li>
-                            
+                            </div>
+
+                            <div th:if="${#lists.isEmpty(latestNotifications)}" class="text-center py-4 px-3">
+                                <div style="font-size:2rem; margin-bottom:0.5rem;">🔔</div>
+                                <p class="text-muted mb-0" style="font-size:0.85rem;">You're all caught up!</p>
+                            </div>
+
                             <th:block th:each="notif : ${latestNotifications}">
-                                <li>
-                                    <a class="dropdown-item d-flex flex-column py-3 border-bottom" th:href="@{/notifications}" th:classappend="${!notif.read ? 'bg-primary bg-opacity-10' : ''}">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <span class="badge bg-secondary bg-opacity-25 text-dark rounded-pill px-2" style="font-size: 0.7rem;" th:text="${notif.type.name()}">TYPE</span>
-                                            <small class="text-muted" th:text="${#temporals.format(notif.createdAt, 'dd MMM HH:mm')}">Date</small>
+                                <a class="sb-notif-item"
+                                   th:href="@{/notifications}"
+                                   th:classappend="${!notif.read ? ' unread' : ''}">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <div th:if="${!notif.read}" class="sb-notif-dot mt-1"></div>
+                                        <div>
+                                            <div style="font-size:0.8rem; color:var(--sb-text-muted); margin-bottom:0.2rem;"
+                                                 th:text="${#temporals.format(notif.createdAt, 'dd MMM • HH:mm')}">Date</div>
+                                            <div style="font-size:0.875rem; font-weight:500; color:var(--sb-text); line-height:1.4;"
+                                                 th:text="${notif.message}">Message</div>
                                         </div>
-                                        <span class="text-wrap fw-medium text-dark" style="font-size: 0.9rem;" th:text="${notif.message}">Message</span>
-                                    </a>
-                                </li>
+                                    </div>
+                                </a>
                             </th:block>
-                            
-                            <li><a class="dropdown-item text-center text-primary fw-medium py-3 rounded-bottom-4" th:href="@{/notifications}">View All Notifications</a></li>
-                        </ul>
+
+                            <div class="text-center" style="padding: 0.875rem;">
+                                <a th:href="@{/notifications}"
+                                   style="font-size:0.85rem; font-weight:600; color:var(--sb-primary); text-decoration:none;">
+                                    View all notifications →
+                                </a>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Logout -->
                     <form th:action="@{/logout}" method="post" class="m-0">
-                        <button type="submit" class="btn btn-sb-primary btn-sm px-4 py-2 rounded-pill shadow-sm"><i class="bi bi-box-arrow-right me-1"></i> Logout</button>
+                        <button type="submit" class="btn-sb-outline"
+                                style="border-radius:8px; padding: 0.4375rem 0.875rem; font-size:0.875rem;">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span class="d-none d-sm-inline">Logout</span>
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </nav>
 </div>
+
+<script th:fragment="active-nav-script">
+    // Auto-highlight active nav link based on current URL
+    (function() {
+        const path = window.location.pathname;
+        const links = document.querySelectorAll('.sb-nav-link');
+        links.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && path.startsWith(href) && href !== '/') {
+                link.classList.add('active');
+            }
+        });
+    })();
+</script>
 
 </body>
 </html>

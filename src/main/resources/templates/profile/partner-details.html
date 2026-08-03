@@ -3,113 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partner Details - SkillBridge</title>
+    <title>Partner Contact Details — SkillBridge</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        .profile-container { max-width: 700px; margin-top: 30px; }
-        .hero-banner {
-            height: 120px;
-            background: linear-gradient(135deg, var(--sb-primary), #3B82F6);
-            border-radius: 12px 12px 0 0;
-            position: relative;
+        .partner-banner {
+            height:120px;
+            background:linear-gradient(135deg, #059669 0%, #10B981 50%, #34D399 100%);
+            border-radius:var(--sb-radius-lg) var(--sb-radius-lg) 0 0;
+            position:relative; overflow:hidden;
         }
-        .profile-img { 
-            width: 120px; 
-            height: 120px; 
-            object-fit: cover; 
-            border-radius: 50%; 
-            border: 5px solid var(--sb-surface); 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            margin-top: -60px; 
-            background-color: white; 
-            position: relative;
-            z-index: 10;
+        .partner-banner::after {
+            content:''; position:absolute; inset:0;
+            background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Ccircle cx='30' cy='30' r='15'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
-        .info-label {
-            font-weight: 600;
-            color: var(--sb-text-muted);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            margin-bottom: 0.2rem;
-            letter-spacing: 0.5px;
+        .partner-avatar {
+            width:90px; height:90px; object-fit:cover;
+            border-radius:50%; border:4px solid #fff;
+            box-shadow:0 4px 16px rgba(0,0,0,0.12);
+            margin-top:-45px; position:relative; z-index:10; background:#fff;
         }
-        .info-value {
-            font-size: 1.05rem;
-            color: var(--sb-text);
-            font-weight: 500;
+        .partner-body { padding:1rem 2rem 2.5rem; text-align:center; }
+        .partner-name { font-size:1.375rem; font-weight:800; letter-spacing:-0.03em; margin-bottom:0.25rem; }
+        .partner-dept { font-size:0.875rem; color:var(--sb-text-muted); }
+        .privacy-notice {
+            background:rgba(37,99,235,0.04);
+            border:1px solid rgba(37,99,235,0.15);
+            border-left:3px solid var(--sb-primary);
+            border-radius:0 var(--sb-radius) var(--sb-radius) 0;
+            padding:0.875rem 1.125rem;
+            display:flex; align-items:flex-start; gap:0.75rem;
+            font-size:0.875rem; color:var(--sb-text-muted);
+            text-align:left; margin-bottom:1.5rem;
         }
-        .contact-badge {
-            background: var(--sb-primary);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+        .contact-grid {
+            display:grid; grid-template-columns:1fr 1fr; gap:1rem;
+            background:var(--sb-bg); border:1px solid var(--sb-border);
+            border-radius:var(--sb-radius); padding:1.25rem;
+            text-align:left;
         }
+        .contact-item-label {
+            font-size:0.7rem; font-weight:700;
+            text-transform:uppercase; letter-spacing:0.08em;
+            color:var(--sb-text-muted); margin-bottom:0.375rem;
+        }
+        .contact-item-value {
+            font-size:0.9375rem; font-weight:600; color:var(--sb-text);
+        }
+        .verified-pill {
+            display:inline-flex; align-items:center; gap:0.375rem;
+            background:rgba(16,185,129,0.08); color:#059669;
+            border:1px solid rgba(16,185,129,0.2); border-radius:9999px;
+            padding:0.25rem 0.75rem; font-size:0.75rem; font-weight:600;
+            margin-bottom:1.25rem;
+        }
+        @media(max-width:575px) { .contact-grid { grid-template-columns:1fr; } }
     </style>
 </head>
 <body>
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container profile-container mb-5">
-    <div class="sb-card mt-4">
-        <div class="hero-banner"></div>
-        <div class="card-body text-center pt-0 px-4 pb-5">
-            <img th:if="${partner.existingProfilePicturePath != null}" th:src="@{${partner.existingProfilePicturePath}}" alt="Profile Picture" class="profile-img mb-3">
-            <img th:if="${partner.existingProfilePicturePath == null}" src="https://ui-avatars.com/api/?name=User&amp;background=random" alt="Default Profile Picture" class="profile-img mb-3">
+<div class="container sb-page" style="max-width:600px;">
 
-            <h3 class="fw-bold mb-1" th:text="${partner.username}">Username</h3>
-            <p class="text-muted fw-medium mb-3" th:text="${(partner.department != null ? partner.department : 'No Department')}">Department</p>
-            <div class="mb-4">
-                <span class="contact-badge"><i class="bi bi-person-lines-fill"></i> Private Contact Details</span>
+    <!-- Back -->
+    <a th:href="@{/requests/incoming}"
+       style="display:inline-flex;align-items:center;gap:0.375rem;font-size:0.8125rem;color:var(--sb-text-muted);text-decoration:none;margin-bottom:1.5rem;">
+        <i class="bi bi-arrow-left"></i> Back to Requests
+    </a>
+
+    <div class="sb-card">
+        <div class="partner-banner"></div>
+        <div class="partner-body">
+
+            <!-- Avatar -->
+            <img th:if="${partner.existingProfilePicturePath != null}"
+                 th:src="@{${partner.existingProfilePicturePath}}"
+                 alt="Partner Avatar" class="partner-avatar mb-3">
+            <img th:unless="${partner.existingProfilePicturePath != null}"
+                 th:src="@{'https://ui-avatars.com/api/?name=' + ${partner.username} + '&background=10B981&color=fff&bold=true&size=90'}"
+                 alt="Default Avatar" class="partner-avatar mb-3">
+
+            <h1 class="partner-name" th:text="${partner.username}">Partner</h1>
+            <p class="partner-dept mb-3" th:text="${partner.department != null ? partner.department : 'No department listed'}"></p>
+
+            <!-- Verified badge -->
+            <div class="verified-pill">
+                <i class="bi bi-shield-fill-check"></i>
+                Contact details unlocked — Accepted/Completed swap
             </div>
 
-            <div class="alert alert-primary bg-primary bg-opacity-10 border-0 border-start border-primary border-4 text-start rounded-end-3 mb-4 d-flex align-items-center gap-3" role="alert">
-                <i class="bi bi-info-circle-fill text-primary fs-4"></i>
-                <small class="text-dark fw-medium">These details are only visible to you because you have an accepted or completed skill swap with <strong th:text="${partner.username}">this user</strong>.</small>
+            <!-- Privacy notice -->
+            <div class="privacy-notice">
+                <i class="bi bi-info-circle-fill" style="color:var(--sb-primary);font-size:1.125rem;flex-shrink:0;margin-top:0.1rem;"></i>
+                <span>These private details are exclusively visible to you because you have an <strong>accepted</strong> or <strong>completed</strong> skill swap with <strong th:text="${partner.username}">this user</strong>.</span>
             </div>
 
-            <div class="sb-card bg-light border-0 p-4 text-start">
-                <div class="row g-4">
-                    <div class="col-sm-6">
-                        <div class="info-label">Email Address</div>
-                        <div class="info-value">
-                            <a th:href="'mailto:' + ${partner.email}" class="text-decoration-none text-primary" th:text="${partner.email}">Email</a>
-                        </div>
+            <!-- Contact grid -->
+            <div class="contact-grid mb-4">
+                <div class="contact-item">
+                    <div class="contact-item-label"><i class="bi bi-envelope-fill me-1"></i>Email Address</div>
+                    <div class="contact-item-value">
+                        <a th:href="'mailto:' + ${partner.email}"
+                           style="color:var(--sb-primary);text-decoration:none;font-size:0.9375rem;font-weight:600;"
+                           th:text="${partner.email}">email</a>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="info-label">Phone Number</div>
-                        <div class="info-value" th:text="${partner.phoneNumber != null and !partner.phoneNumber.isEmpty() ? '+91 ' + partner.phoneNumber : 'Not provided'}">Phone</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-label"><i class="bi bi-phone-fill me-1"></i>Phone Number</div>
+                    <div class="contact-item-value"
+                         th:text="${partner.phoneNumber != null and !partner.phoneNumber.isEmpty() ? '+91 ' + partner.phoneNumber : 'Not provided'}">
                     </div>
-                    <div class="col-sm-6">
-                        <div class="info-label">Preferred Time</div>
-                        <div class="info-value">
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle px-2 py-1" th:text="${partner.preferredTime}">Time</span>
-                        </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-label"><i class="bi bi-clock-fill me-1"></i>Preferred Time</div>
+                    <div class="contact-item-value">
+                        <span style="display:inline-flex;align-items:center;font-size:0.8125rem;padding:0.2rem 0.625rem;border-radius:9999px;background:rgba(100,116,139,0.07);color:#475569;border:1px solid rgba(100,116,139,0.2);"
+                              th:text="${partner.preferredTime}">Time</span>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="info-label">Availability</div>
-                        <div class="info-value">
-                            <span class="badge px-2 py-1" th:classappend="${partner.availabilityMode != null and partner.availabilityMode.name() == 'ONLINE' ? 'bg-success bg-opacity-10 text-success border border-success-subtle' : (partner.availabilityMode != null and partner.availabilityMode.name() == 'HYBRID' ? 'bg-info bg-opacity-10 text-info-emphasis border border-info-subtle' : 'bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle')}" th:text="${partner.availabilityMode}">Mode</span>
-                        </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-label"><i class="bi bi-wifi me-1"></i>Availability</div>
+                    <div class="contact-item-value">
+                        <span style="display:inline-flex;align-items:center;font-size:0.8125rem;padding:0.2rem 0.625rem;border-radius:9999px;background:rgba(37,99,235,0.07);color:#2563EB;border:1px solid rgba(37,99,235,0.2);"
+                              th:text="${partner.availabilityMode}">Mode</span>
                     </div>
                 </div>
             </div>
 
-            <div class="text-center mt-5 d-flex gap-3 justify-content-center">
-                <a th:href="@{/profile/{username}(username=${partner.username})}" class="btn btn-outline-primary fw-medium rounded-pill px-4"><i class="bi bi-person-badge me-2"></i>View Public Profile</a>
-                <a th:href="@{/requests/incoming}" class="btn btn-light border fw-medium rounded-pill px-4"><i class="bi bi-arrow-left me-2"></i>Back to Requests</a>
+            <!-- Actions -->
+            <div class="d-flex gap-3 justify-content-center">
+                <a th:href="@{/profile/{u}(u=${partner.username})}" class="btn-sb-primary">
+                    <i class="bi bi-person-badge"></i> View Public Profile
+                </a>
+                <a th:href="@{/requests/incoming}" class="btn-sb-outline">
+                    <i class="bi bi-arrow-left"></i> Back to Requests
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: active-nav-script}"></script>
 </body>
 </html>

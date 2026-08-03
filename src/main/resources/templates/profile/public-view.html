@@ -3,197 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${profile.username} + ' - Profile'">Public Profile</title>
+    <title th:text="${profile.username} + ' — SkillBridge'">Public Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        .profile-container { max-width: 850px; margin-top: 30px; }
-        .hero-banner {
-            height: 140px;
-            background: linear-gradient(135deg, var(--sb-primary), #3B82F6);
-            border-radius: 12px 12px 0 0;
-            position: relative;
+        .pub-banner {
+            height: 160px;
+            background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 45%, #7C3AED 100%);
+            border-radius: var(--sb-radius-lg) var(--sb-radius-lg) 0 0;
+            position: relative; overflow: hidden;
         }
-        .profile-img { 
-            width: 140px; 
-            height: 140px; 
-            object-fit: cover; 
-            border-radius: 50%; 
-            border: 5px solid var(--sb-surface); 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            margin-top: -70px; 
-            background-color: white; 
-            position: relative;
-            z-index: 10;
+        .pub-banner::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='40' cy='40' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
-        .stat-box {
-            background-color: var(--sb-bg);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            border: 1px solid var(--sb-border);
+        .pub-avatar {
+            width:110px; height:110px; object-fit:cover;
+            border-radius:50%; border:4px solid #fff;
+            box-shadow:0 4px 16px rgba(0,0,0,0.15);
+            margin-top:-55px; position:relative; z-index:10; background:#fff;
         }
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--sb-text);
+        .pub-card-body { padding:1rem 2rem 2rem; }
+        .pub-name { font-size:1.5rem; font-weight:800; letter-spacing:-0.03em; margin-bottom:0.25rem; }
+        .pub-dept { font-size:0.9rem; color:var(--sb-text-muted); margin-bottom:1.5rem; }
+        .meta-row { display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--sb-text-muted; margin-bottom:0.5rem; }
+        .info-grid {
+            display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
+            gap:1rem; background:var(--sb-bg); border:1px solid var(--sb-border);
+            border-radius:var(--sb-radius); padding:1.25rem;
         }
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--sb-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-        .review-card {
-            margin-bottom: 1.5rem;
-        }
-        .skill-card {
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-        }
-        .skill-card-body {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
+        .info-block-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--sb-text-muted); margin-bottom:0.3rem; }
+        .info-block-value { font-size:0.9375rem; font-weight:600; color:var(--sb-text); }
+        .section-head { display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; }
+        .section-head-icon { width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:1rem; }
+        .section-head-title { font-size:1rem; font-weight:700; }
+        .review-row { background:var(--sb-bg); border:1px solid var(--sb-border); border-radius:var(--sb-radius); padding:1rem 1.25rem; margin-bottom:0.75rem; }
+        .review-row:last-child { margin-bottom:0; }
+        .stars-sm { display:inline-flex; gap:2px; font-size:0.8rem; }
+        .star-f { color:#F59E0B; }
+        .star-e { color:#E2E8F0; }
     </style>
 </head>
 <body>
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container profile-container mb-5">
-    <div class="sb-card mt-4 mb-4">
-        <div class="hero-banner"></div>
-        <div class="card-body text-center pt-0 px-4 pb-5">
-            <img th:if="${profile.existingProfilePicturePath != null}" th:src="@{${profile.existingProfilePicturePath}}" alt="Profile Picture" class="profile-img mb-3">
-            <img th:unless="${profile.existingProfilePicturePath != null}" src="https://ui-avatars.com/api/?name=User&background=random" alt="Default Avatar" class="profile-img mb-3">
-            
-            <h3 class="fw-bold mb-1" th:text="${profile.username}">Username</h3>
-            <div class="mb-4 d-flex justify-content-center">
-                <span class="badge bg-warning bg-opacity-10 text-dark border border-warning-subtle fs-6 rounded-pill px-3 py-2 d-flex align-items-center gap-2 shadow-sm">
-                    <i class="bi bi-star-fill text-warning"></i> <span class="fw-bold" th:text="${#numbers.formatDecimal(profile.averageRating, 1, 1)}">0.0</span> Rating
-                </span>
-            </div>
-            
-            <div class="row text-start justify-content-center mb-4">
-                <div class="col-md-10">
-                    <div class="sb-card bg-light border-0 p-4 p-md-5">
-                        <div class="row g-4">
-                            <div class="col-sm-6">
-                                <p class="mb-1 text-muted fw-semibold small text-uppercase letter-spacing-1">Department</p>
-                                <p class="mb-0 fw-medium fs-5" th:text="${profile.department != null ? profile.department : 'Not specified'}"></p>
-                            </div>
-                            <div class="col-sm-6">
-                                <p class="mb-1 text-muted fw-semibold small text-uppercase letter-spacing-1">Semester</p>
-                                <p class="mb-0 fw-medium fs-5" th:text="${profile.semester != null ? profile.semester : 'Not specified'}"></p>
-                            </div>
-                            <div class="col-12 mt-4">
-                                <p class="mb-2 text-muted fw-semibold small text-uppercase letter-spacing-1">Bio</p>
-                                <p class="mb-0 text-dark lh-lg" th:text="${profile.bio != null ? profile.bio : 'No bio added yet.'}"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-5" th:unless="${isSelf}">
-                <div th:if="${hasActiveRequest}">
-                    <a th:href="@{/requests/incoming}" class="btn btn-secondary px-5 py-3 rounded-pill shadow-sm fw-medium fs-5"><i class="bi bi-box-arrow-in-down me-2"></i>View Existing Request</a>
-                </div>
-                <div th:unless="${hasActiveRequest}">
-                    <a th:href="@{/requests/send/{username}(username=${profile.username})}" class="btn btn-sb-accent px-5 py-3 rounded-pill shadow-sm fw-medium fs-5"><i class="bi bi-send-fill me-2"></i>Send Swap Request</a>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="container sb-page" style="max-width:900px;">
 
+    <!-- ── Profile Card ── -->
     <div class="sb-card mb-4">
-        <div class="card-header bg-white border-bottom pt-4 pb-3 px-4 px-md-5 d-flex align-items-center gap-2">
-            <i class="bi bi-tools text-primary fs-4"></i>
-            <h5 class="fw-bold mb-0" th:text="|${profile.username}'s Skills|">Skills</h5>
-        </div>
-        <div class="card-body p-4 p-md-5">
-            <div th:if="${skills == null or #lists.isEmpty(skills)}" class="text-center py-5 border rounded-4 bg-light">
-                <div class="text-muted mb-3"><i class="bi bi-journal-x fs-1"></i></div>
-                <p class="text-muted mb-0 fs-5">This user hasn't added any skills yet.</p>
-            </div>
-            
-            <div th:unless="${skills == null or #lists.isEmpty(skills)}" class="row row-cols-1 row-cols-md-2 g-4">
-                <div class="col" th:each="skill : ${skills}">
-                    <div class="sb-card skill-card border transition-hover">
-                        <div class="card-body skill-card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-4 gap-2">
-                                <h5 class="card-title text-dark fw-bold mb-0 lh-base" th:text="${skill.skillName}">Skill Name</h5>
-                                <span class="badge rounded-pill px-3 py-1 fw-medium flex-shrink-0" th:classappend="${skill.skillType.name() == 'OFFERED' ? 'bg-success bg-opacity-10 text-success border border-success-subtle' : 'bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle'}" th:text="${skill.skillType.name() == 'OFFERED' ? 'Teach' : 'Learn'}">Type</span>
-                            </div>
-                            <div class="mb-4 d-flex align-items-center gap-2 flex-wrap">
-                                <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-tag-fill text-muted me-1"></i><span th:text="${skill.skillCategory}">Category</span></span>
-                                <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-bar-chart-fill text-muted me-1"></i><span th:text="${skill.skillLevel}">Level</span></span>
-                            </div>
-                            <p class="card-text text-secondary mb-0 mt-auto lh-lg" style="font-size: 0.95rem;" th:if="${skill.description}" th:text="${skill.description}">Description</p>
-                        </div>
+        <div class="pub-banner"></div>
+        <div class="pub-card-body">
+            <div class="d-flex align-items-end gap-3 mb-3">
+                <img th:if="${profile.existingProfilePicturePath != null}"
+                     th:src="@{${profile.existingProfilePicturePath}}"
+                     alt="Profile Picture" class="pub-avatar">
+                <img th:unless="${profile.existingProfilePicturePath != null}"
+                     th:src="@{'https://ui-avatars.com/api/?name=' + ${profile.username} + '&background=2563EB&color=fff&bold=true&size=110'}"
+                     alt="Avatar" class="pub-avatar">
+                <div class="pb-1 flex-grow-1">
+                    <h1 class="pub-name" th:text="${profile.username}">Username</h1>
+                    <p class="pub-dept mb-0">
+                        <span th:if="${profile.department != null}" th:text="${profile.department}"></span>
+                        <span th:if="${profile.department != null and profile.semester != null}"> · </span>
+                        <span th:if="${profile.semester != null}" th:text="'Semester ' + ${profile.semester}"></span>
+                    </p>
+                </div>
+                <!-- Rating badge -->
+                <div class="pb-1 text-end">
+                    <div style="display:inline-flex;align-items:center;gap:0.375rem;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:9999px;padding:0.375rem 0.875rem;">
+                        <i class="bi bi-star-fill" style="color:#F59E0B;font-size:0.9rem;"></i>
+                        <span style="font-weight:800;font-size:1rem;letter-spacing:-0.02em;" th:text="${#numbers.formatDecimal(profile.averageRating, 1, 1)}">0.0</span>
+                        <span style="font-size:0.75rem;color:var(--sb-text-muted);">(<span th:text="${profile.reviewCount}">0</span>)</span>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Reviews Section -->
-    <div class="sb-card mb-5">
-        <div class="card-header bg-white border-bottom pt-4 pb-3 px-4 px-md-5 d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-star-fill text-warning fs-4"></i>
-                <h5 class="fw-bold mb-0" th:text="|${profile.username}'s Reviews|">Reviews</h5>
-            </div>
-            <a th:href="@{/profile/{username}/reviews(username=${profile.username})}" class="btn btn-light border rounded-pill shadow-sm fw-medium px-4 text-dark transition-hover" th:if="${profile.reviewCount > 0}">View All Reviews</a>
-        </div>
-        <div class="card-body p-4 p-md-5">
-            <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-5" th:if="${profile.reviewCount > 0}">
-                <div class="display-4 fw-bold text-dark me-3">
-                    <span th:text="${#numbers.formatDecimal(profile.averageRating, 1, 1)}">0.0</span>
+            <!-- Info grid -->
+            <div class="info-grid mb-4">
+                <div>
+                    <div class="info-block-label">Availability</div>
+                    <div class="info-block-value">
+                        <span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.8125rem;padding:0.2rem 0.625rem;border-radius:9999px;background:rgba(37,99,235,0.07);color:#2563EB;border:1px solid rgba(37,99,235,0.2);"
+                              th:text="${profile.availabilityMode != null ? profile.availabilityMode : '—'}">—</span>
+                    </div>
                 </div>
                 <div>
-                    <div class="d-flex align-items-center mb-1 bg-warning bg-opacity-10 border border-warning-subtle rounded-pill px-3 py-1">
-                        <i class="bi" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= profile.averageRating ? 'bi-star-fill text-warning me-1' : 'bi-star text-warning opacity-25 me-1'}" style="font-size: 1.25rem;"></i>
+                    <div class="info-block-label">Preferred Time</div>
+                    <div class="info-block-value">
+                        <span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.8125rem;padding:0.2rem 0.625rem;border-radius:9999px;background:rgba(100,116,139,0.07);color:#475569;border:1px solid rgba(100,116,139,0.2);"
+                              th:text="${profile.preferredTime != null ? profile.preferredTime : '—'}">—</span>
                     </div>
-                    <small class="text-muted fw-medium d-block text-center mt-2" th:text="|Based on ${profile.reviewCount} completed swaps|">0 reviews</small>
+                </div>
+                <div th:if="${profile.bio != null and !profile.bio.isEmpty()}" style="grid-column:1/-1;">
+                    <div class="info-block-label">Bio</div>
+                    <div style="font-size:0.9rem;font-weight:400;color:var(--sb-text-muted);line-height:1.6;" th:text="${profile.bio}"></div>
                 </div>
             </div>
 
-            <div th:if="${#lists.isEmpty(recentReviews)}" class="text-center py-5 border rounded-4 bg-light">
-                <div class="text-muted mb-3"><i class="bi bi-chat-left-text fs-1"></i></div>
-                <p class="text-muted mb-0 fs-5">This user hasn't received any reviews yet.</p>
+            <!-- CTA Button -->
+            <div th:unless="${isSelf}">
+                <div th:if="${hasActiveRequest}">
+                    <a th:href="@{/requests/incoming}" class="btn-sb-outline">
+                        <i class="bi bi-box-arrow-in-down"></i> View Existing Request
+                    </a>
+                </div>
+                <div th:unless="${hasActiveRequest}">
+                    <a th:href="@{/requests/send/{username}(username=${profile.username})}" class="btn-sb-accent">
+                        <i class="bi bi-send-fill"></i> Send Swap Request
+                    </a>
+                </div>
+            </div>
+            <div th:if="${isSelf}">
+                <a th:href="@{/profile/edit}" class="btn-sb-outline" style="font-size:0.875rem;">
+                    <i class="bi bi-pencil"></i> Edit My Profile
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Skills ── -->
+    <div class="sb-card mb-4">
+        <div class="sb-card-header">
+            <div class="section-head mb-0">
+                <div class="section-head-icon" style="background:rgba(37,99,235,0.08);color:#2563EB;">
+                    <i class="bi bi-tools"></i>
+                </div>
+                <span class="section-head-title" th:text="${profile.username} + '''s Skills'">Skills</span>
+            </div>
+        </div>
+        <div class="sb-card-body">
+            <div th:if="${skills == null or #lists.isEmpty(skills)}" class="sb-empty" style="padding:2.5rem 1rem;">
+                <div class="sb-empty-icon"><i class="bi bi-journal-x"></i></div>
+                <h4>No skills listed yet</h4>
+                <p>This student hasn't added any skills yet.</p>
+            </div>
+
+            <div th:unless="${skills == null or #lists.isEmpty(skills)}">
+                <!-- Offered skills -->
+                <div class="mb-4">
+                    <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#059669;margin-bottom:0.75rem;">
+                        <i class="bi bi-mortarboard-fill me-1"></i> Can Teach
+                    </div>
+                    <div class="row g-3">
+                        <div th:each="skill : ${skills}" th:if="${skill.skillType.name() == 'OFFERED'}" class="col-md-6">
+                            <div style="background:rgba(16,185,129,0.04);border:1px solid rgba(16,185,129,0.15);border-radius:var(--sb-radius);padding:1rem;">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span style="font-weight:700;color:#059669;" th:text="${skill.skillName}">Skill</span>
+                                    <span style="font-size:0.7rem;font-weight:600;padding:0.125rem 0.5rem;border-radius:9999px;background:rgba(16,185,129,0.1);color:#059669;border:1px solid rgba(16,185,129,0.2);"
+                                          th:text="${skill.skillLevel}">Level</span>
+                                </div>
+                                <div style="font-size:0.75rem;color:var(--sb-text-muted);" th:text="${skill.skillCategory}">Category</div>
+                                <p th:if="${skill.description}" style="font-size:0.8125rem;color:var(--sb-text-muted);margin:0.5rem 0 0;line-height:1.5;" th:text="${skill.description}"></p>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(skills.?[skillType.name() == 'OFFERED'])}" class="col-12">
+                            <p style="font-size:0.875rem;color:var(--sb-text-muted);font-style:italic;margin:0;">No offered skills listed.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Required skills -->
+                <div>
+                    <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#D97706;margin-bottom:0.75rem;">
+                        <i class="bi bi-lightbulb-fill me-1"></i> Wants to Learn
+                    </div>
+                    <div class="row g-3">
+                        <div th:each="skill : ${skills}" th:if="${skill.skillType.name() == 'REQUIRED'}" class="col-md-6">
+                            <div style="background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.15);border-radius:var(--sb-radius);padding:1rem;">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span style="font-weight:700;color:#D97706;" th:text="${skill.skillName}">Skill</span>
+                                    <span style="font-size:0.7rem;font-weight:600;padding:0.125rem 0.5rem;border-radius:9999px;background:rgba(245,158,11,0.1);color:#D97706;border:1px solid rgba(245,158,11,0.2);"
+                                          th:text="${skill.skillLevel}">Level</span>
+                                </div>
+                                <div style="font-size:0.75rem;color:var(--sb-text-muted);" th:text="${skill.skillCategory}">Category</div>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(skills.?[skillType.name() == 'REQUIRED'])}" class="col-12">
+                            <p style="font-size:0.875rem;color:var(--sb-text-muted);font-style:italic;margin:0;">No wanted skills listed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Reviews Section ── -->
+    <div class="sb-card mb-4">
+        <div class="sb-card-header">
+            <div class="section-head mb-0">
+                <div class="section-head-icon" style="background:rgba(245,158,11,0.08);color:#D97706;">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <span class="section-head-title" th:text="${profile.username} + '''s Reviews'">Reviews</span>
+            </div>
+            <a th:if="${profile.reviewCount > 0}"
+               th:href="@{/profile/{u}/reviews(u=${profile.username})}"
+               class="btn-sb-outline" style="font-size:0.8125rem;">
+                View All →
+            </a>
+        </div>
+        <div class="sb-card-body">
+            <!-- Rating summary row -->
+            <div class="d-flex align-items-center gap-3 mb-4 pb-4" style="border-bottom:1px solid var(--sb-border);" th:if="${profile.reviewCount > 0}">
+                <div style="font-size:2.5rem;font-weight:900;letter-spacing:-0.05em;" th:text="${#numbers.formatDecimal(profile.averageRating, 1, 1)}">0.0</div>
+                <div>
+                    <div class="stars-sm mb-1">
+                        <i class="bi" th:each="i : ${#numbers.sequence(1, 5)}"
+                           th:classappend="${i <= profile.averageRating ? 'bi-star-fill star-f' : 'bi-star star-e'}"></i>
+                    </div>
+                    <div style="font-size:0.8rem;color:var(--sb-text-muted);">
+                        From <strong th:text="${profile.reviewCount}">0</strong> completed swaps
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(recentReviews)}" class="sb-empty" style="padding:2.5rem 1rem;">
+                <div class="sb-empty-icon"><i class="bi bi-chat-square-text"></i></div>
+                <h4>No reviews yet</h4>
+                <p>Complete a skill swap to receive reviews.</p>
             </div>
 
             <div th:unless="${#lists.isEmpty(recentReviews)}">
-                <div class="row g-4">
-                    <div class="col-12" th:each="review : ${recentReviews}">
-                        <div class="sb-card review-card border mb-0 transition-hover">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold fs-5 border shadow-sm" style="width: 45px; height: 45px;">
-                                            <span th:text="${#strings.substring(review.reviewerUsername,0,1).toUpperCase()}">R</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0 fw-bold fs-5">
-                                                <a th:href="@{/profile/{username}(username=${review.reviewerUsername})}" class="text-decoration-none text-dark stretched-link-hover" th:text="${review.reviewerUsername}">User</a>
-                                            </h6>
-                                            <small class="text-muted fw-medium d-flex align-items-center mt-1"><i class="bi bi-calendar3 me-1"></i><span th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}">Date</span></small>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex bg-warning bg-opacity-10 border border-warning-subtle rounded-pill px-3 py-1 shadow-sm">
-                                        <i class="bi" style="font-size: 0.95rem;" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= review.rating ? 'bi-star-fill text-warning me-1' : 'bi-star text-warning opacity-25 me-1'}"></i>
-                                    </div>
-                                </div>
-                                <p class="mb-0 text-dark fs-6 lh-lg mt-3" th:if="${review.comment != null and !review.comment.isEmpty()}" th:text="${review.comment}"></p>
-                                <p class="mb-0 text-muted fst-italic mt-3" th:unless="${review.comment != null and !review.comment.isEmpty()}">No comment provided.</p>
+                <div th:each="review : ${recentReviews}" class="review-row">
+                    <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:34px;height:34px;border-radius:50%;background:var(--sb-primary-light);color:var(--sb-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.875rem;flex-shrink:0;">
+                                <span th:text="${#strings.substring(review.reviewerUsername,0,1).toUpperCase()}">R</span>
+                            </div>
+                            <div>
+                                <a th:href="@{/profile/{u}(u=${review.reviewerUsername})}"
+                                   style="font-size:0.9rem;font-weight:700;color:var(--sb-text);text-decoration:none;"
+                                   th:text="${review.reviewerUsername}">User</a>
+                                <div style="font-size:0.75rem;color:var(--sb-text-muted);"
+                                     th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}">Date</div>
                             </div>
                         </div>
+                        <div class="stars-sm">
+                            <i class="bi" th:each="i : ${#numbers.sequence(1, 5)}"
+                               th:classappend="${i <= review.rating ? 'bi-star-fill star-f' : 'bi-star star-e'}"></i>
+                        </div>
                     </div>
+                    <p th:if="${review.comment != null and !review.comment.isEmpty()}"
+                       style="font-size:0.875rem;color:var(--sb-text);line-height:1.6;margin:0;"
+                       th:text="${review.comment}"></p>
+                    <p th:unless="${review.comment != null and !review.comment.isEmpty()}"
+                       style="font-size:0.875rem;color:var(--sb-text-muted);font-style:italic;margin:0;">No comment provided.</p>
                 </div>
             </div>
         </div>
@@ -201,5 +258,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: active-nav-script}"></script>
 </body>
 </html>

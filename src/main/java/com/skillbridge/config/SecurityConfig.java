@@ -48,7 +48,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/register", "/login", "/css/**", "/js/**", "/images/**", "/webjars/**", "/uploads/**", "/favicon.ico")
+                        // ⚠️ DEVELOPMENT ONLY — Remove /dev/** before production deployment ⚠️
+                        .requestMatchers("/dev/**").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/webjars/**",
+                                "/uploads/**", "/favicon.ico")
                         .permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form

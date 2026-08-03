@@ -20,6 +20,11 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @GetMapping("/")
+    public String showLandingPage() {
+        return "landing";
+    }
+
     @GetMapping("/login")
     public String showLoginForm() {
         return "auth/login";

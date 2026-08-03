@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillBridge — Learn • Teach • Grow Together</title>
+    <meta name="description" content="SkillBridge is a student skill exchange platform where knowledge becomes the currency. Connect with peers, teach what you know, and learn what you don't.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sb-primary: #2563EB;
+            --sb-primary-hover: #1D4ED8;
+            --sb-accent: #10B981;
+            --sb-bg: #F8FAFC;
+            --sb-surface: #FFFFFF;
+            --sb-text: #0F172A;
+            --sb-text-muted: #64748B;
+            --sb-border: #E2E8F0;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--sb-surface);
+            color: var(--sb-text);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ── Landing Navbar ── */
+        .land-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--sb-border);
+            padding: 0 1.5rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .land-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--sb-primary);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+        }
+        .land-brand .b-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+        }
+        .land-nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+        .btn-nav-login {
+            padding: 0.4375rem 1rem;
+            border: 1px solid var(--sb-border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--sb-text);
+            background: transparent;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+        .btn-nav-login:hover { background: var(--sb-bg); color: var(--sb-text); }
+        .btn-nav-cta {
+            padding: 0.4375rem 1.125rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #fff;
+            background: var(--sb-primary);
+            text-decoration: none;
+            box-shadow: 0 1px 2px rgba(37,99,235,0.25);
+            transition: all 0.15s ease;
+        }
+        .btn-nav-cta:hover { background: var(--sb-primary-hover); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+
+        /* ── Hero Section ── */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 96px 0 80px;
+            background: linear-gradient(160deg, #F0F7FF 0%, #FAFFFE 50%, #F8FAFC 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(37,99,235,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(16,185,129,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(37,99,235,0.08);
+            color: var(--sb-primary);
+            border: 1px solid rgba(37,99,235,0.15);
+            border-radius: 9999px;
+            padding: 0.3125rem 1rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            color: var(--sb-text);
+            margin-bottom: 1.25rem;
+        }
+        .hero-title .highlight {
+            background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-tagline {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--sb-text-muted);
+            margin-bottom: 1.75rem;
+            flex-wrap: wrap;
+        }
+        .hero-tagline .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-weight: 600;
+            color: var(--sb-text);
+        }
+        .hero-tagline .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--sb-border);
+        }
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--sb-text-muted);
+            line-height: 1.7;
+            max-width: 540px;
+            margin-bottom: 2.5rem;
+        }
+        .hero-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .btn-hero-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            background: var(--sb-primary);
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+            transition: all 0.2s ease;
+        }
+        .btn-hero-primary:hover { color: #fff; background: var(--sb-primary-hover); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,99,235,0.4); }
+        .btn-hero-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            border: 1px solid var(--sb-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--sb-text);
+            background: var(--sb-surface);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-hero-secondary:hover { background: var(--sb-bg); border-color: #CBD5E1; color: var(--sb-text); transform: translateY(-1px); }
+
+        /* Hero visual */
+        .hero-visual {
+            position: relative;
+            padding: 1rem;
+        }
+        .hero-card-float {
+            background: #fff;
+            border: 1px solid var(--sb-border);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .hero-card-float:hover { transform: translateY(-4px); }
+        .hero-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .hero-stat-pill {
+            background: #fff;
+            border: 1px solid var(--sb-border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+        }
+        .hero-stat-num {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            display: block;
+        }
+        .hero-stat-lbl {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--sb-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .match-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            background: #fff;
+            border: 1px solid var(--sb-border);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+        }
+        .match-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .match-score-badge {
+            margin-left: auto;
+            background: linear-gradient(135deg, #10B981, #34D399);
+            color: #fff;
+            border-radius: 8px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 700;
+        }
+
+        /* ── Stats Bar ── */
+        .stats-bar {
+            background: var(--sb-primary);
+            padding: 2.5rem 0;
+        }
+        .stats-bar .stat-item {
+            text-align: center;
+            color: #fff;
+        }
+        .stats-bar .stat-num {
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .stats-bar .stat-lbl {
+            font-size: 0.875rem;
+            opacity: 0.75;
+            font-weight: 500;
+        }
+
+        /* ── Features Section ── */
+        .features-section {
+            padding: 6rem 0;
+            background: var(--sb-bg);
+        }
+        .section-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--sb-primary);
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            font-size: 1.0625rem;
+            color: var(--sb-text-muted);
+            line-height: 1.7;
+            max-width: 560px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid var(--sb-border);
+            border-radius: 16px;
+            padding: 2rem;
+            height: 100%;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: transparent;
+            transition: background 0.25s ease;
+        }
+        .feature-card:hover {
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+            border-color: #CBD5E1;
+            transform: translateY(-4px);
+        }
+        .feature-card:hover::before { background: linear-gradient(90deg, var(--sb-primary), #7C3AED); }
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .feature-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        .feature-desc { color: var(--sb-text-muted); font-size: 0.9375rem; line-height: 1.65; margin: 0; }
+
+        /* ── How It Works ── */
+        .how-section {
+            padding: 6rem 0;
+            background: #fff;
+        }
+        .timeline-step {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            position: relative;
+            padding-bottom: 2.5rem;
+        }
+        .timeline-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 27px;
+            top: 56px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--sb-primary), transparent);
+            opacity: 0.2;
+        }
+        .step-num {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: var(--sb-primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+        }
+        .step-content { padding-top: 0.5rem; }
+        .step-title { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .step-desc { color: var(--sb-text-muted); line-height: 1.65; margin: 0; }
+
+        /* ── Why Section ── */
+        .why-section {
+            padding: 6rem 0;
+            background: linear-gradient(160deg, #EFF6FF 0%, #F0FDF4 100%);
+        }
+        .why-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            margin-bottom: 1.75rem;
+        }
+        .why-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--sb-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .why-text h5 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .why-text p { color: var(--sb-text-muted); font-size: 0.9rem; margin: 0; }
+
+        /* CTA Banner */
+        .cta-section {
+            padding: 6rem 0;
+            background: var(--sb-text);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .cta-title { font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 900; color: #fff; letter-spacing: -0.04em; margin-bottom: 1rem; }
+        .cta-sub { font-size: 1.0625rem; color: rgba(255,255,255,0.65); margin-bottom: 2.5rem; }
+        .btn-cta-white {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9375rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--sb-primary);
+            background: #fff;
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+        .btn-cta-white:hover { color: var(--sb-primary-hover); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+        .btn-cta-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9375rem 2rem;
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.85);
+            background: transparent;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-cta-outline:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.4); }
+
+        /* ── Footer ── */
+        .land-footer {
+            background: #0F172A;
+            color: rgba(255,255,255,0.55);
+            padding: 2.5rem 0;
+            text-align: center;
+        }
+        .land-footer .f-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.125rem;
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+        }
+        .land-footer p { font-size: 0.875rem; margin-bottom: 0.25rem; }
+        .land-footer .f-divider { border-color: rgba(255,255,255,0.08); margin: 1.25rem auto; max-width: 400px; }
+
+        /* ── Animations ── */
+        @keyframes float-up {
+            0% { opacity: 0; transform: translateY(24px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .anim-1 { animation: float-up 0.6s ease forwards; }
+        .anim-2 { animation: float-up 0.6s 0.1s ease both; }
+        .anim-3 { animation: float-up 0.6s 0.2s ease both; }
+        .anim-4 { animation: float-up 0.6s 0.3s ease both; }
+
+        @media (max-width: 991px) {
+            .hero-section { padding-top: 100px; padding-bottom: 60px; }
+            .hero-visual { margin-top: 3rem; }
+            .hero-stats-row { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 575px) {
+            .hero-title { font-size: 2.25rem; }
+            .land-nav { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav class="land-nav">
+    <a href="/" class="land-brand">
+        <span class="b-icon"><i class="bi bi-layers-half"></i></span>
+        SkillBridge
+    </a>
+    <div class="land-nav-actions">
+        <a th:href="@{/login}" href="/login" class="btn-nav-login">Log in</a>
+        <a th:href="@{/register}" href="/register" class="btn-nav-cta">Get Started</a>
+    </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero-section">
+    <div class="container position-relative">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="hero-label anim-1">
+                    <i class="bi bi-stars"></i> Mini Project — Department of CS
+                </div>
+                <h1 class="hero-title anim-2">
+                    The smarter way<br>
+                    students <span class="highlight">exchange skills</span>
+                </h1>
+                <div class="hero-tagline anim-3">
+                    <span class="tag"><i class="bi bi-mortarboard-fill" style="color:#2563EB"></i> Learn</span>
+                    <span class="dot"></span>
+                    <span class="tag"><i class="bi bi-lightbulb-fill" style="color:#10B981"></i> Teach</span>
+                    <span class="dot"></span>
+                    <span class="tag"><i class="bi bi-graph-up-arrow" style="color:#7C3AED"></i> Grow Together</span>
+                </div>
+                <p class="hero-subtitle anim-3">
+                    A student skill exchange platform where <strong>knowledge becomes the currency</strong>.
+                    Find peers who teach what you want to learn — and learn what they want to teach.
+                </p>
+                <div class="hero-actions anim-4">
+                    <a th:href="@{/register}" href="/register" class="btn-hero-primary">
+                        <i class="bi bi-rocket-takeoff-fill"></i> Get Started Free
+                    </a>
+                    <a th:href="@{/login}" href="/login" class="btn-hero-secondary">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-visual anim-4">
+                    <!-- Stats row -->
+                    <div class="hero-stats-row">
+                        <div class="hero-stat-pill">
+                            <span class="hero-stat-num" style="color:#2563EB">200+</span>
+                            <span class="hero-stat-lbl">Students</span>
+                        </div>
+                        <div class="hero-stat-pill">
+                            <span class="hero-stat-num" style="color:#10B981">500+</span>
+                            <span class="hero-stat-lbl">Skills Listed</span>
+                        </div>
+                        <div class="hero-stat-pill">
+                            <span class="hero-stat-num" style="color:#7C3AED">4.8★</span>
+                            <span class="hero-stat-lbl">Avg Rating</span>
+                        </div>
+                    </div>
+                    <!-- Match preview card -->
+                    <div class="hero-card-float">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <i class="bi bi-people-fill text-primary"></i>
+                            <span style="font-size:0.875rem; font-weight:600;">Skill Match Found</span>
+                            <span class="ms-auto" style="font-size:0.75rem; color:var(--sb-text-muted);">Just now</span>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="match-card">
+                                <div class="match-avatar" style="background:rgba(37,99,235,0.1); color:#2563EB;">A</div>
+                                <div>
+                                    <div style="font-size:0.875rem; font-weight:600;">Alice — 3rd Sem CS</div>
+                                    <div style="font-size:0.75rem; color:var(--sb-text-muted);">Teaches Python • Wants Design</div>
+                                </div>
+                                <div class="match-score-badge">92%</div>
+                            </div>
+                            <div class="match-card">
+                                <div class="match-avatar" style="background:rgba(124,58,237,0.1); color:#7C3AED;">R</div>
+                                <div>
+                                    <div style="font-size:0.875rem; font-weight:600;">Rohit — 5th Sem ECE</div>
+                                    <div style="font-size:0.75rem; color:var(--sb-text-muted);">Teaches Circuits • Wants Java</div>
+                                </div>
+                                <div class="match-score-badge">85%</div>
+                            </div>
+                            <div class="match-card">
+                                <div class="match-avatar" style="background:rgba(16,185,129,0.1); color:#10B981;">P</div>
+                                <div>
+                                    <div style="font-size:0.875rem; font-weight:600;">Priya — 4th Sem IT</div>
+                                    <div style="font-size:0.75rem; color:var(--sb-text-muted);">Teaches UI/UX • Wants ML</div>
+                                </div>
+                                <div class="match-score-badge">78%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════ STATS BAR ══════════ -->
+<div class="stats-bar">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-6 col-md-3 stat-item">
+                <span class="stat-num">200+</span>
+                <span class="stat-lbl">Active Students</span>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <span class="stat-num">500+</span>
+                <span class="stat-lbl">Skills Listed</span>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <span class="stat-num">150+</span>
+                <span class="stat-lbl">Completed Swaps</span>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <span class="stat-num">4.8★</span>
+                <span class="stat-lbl">Average Rating</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════ FEATURES ══════════ -->
+<section class="features-section" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-label">Why SkillBridge</span>
+            <h2 class="section-title">Everything you need to grow</h2>
+            <p class="section-subtitle mx-auto">Built specifically for students who want to learn faster by learning from each other — not just from textbooks.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:rgba(37,99,235,0.08); color:#2563EB;">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Matching</h3>
+                    <p class="feature-desc">Our algorithm pairs you with students whose skills complement yours. Teach what you know, learn what you don't.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:rgba(16,185,129,0.08); color:#10B981;">
+                        <i class="bi bi-shield-check-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Verified Peers</h3>
+                    <p class="feature-desc">Only registered college students join SkillBridge. Every profile is tied to an academic identity you can trust.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:rgba(124,58,237,0.08); color:#7C3AED;">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+                    <h3 class="feature-title">Structured Swaps</h3>
+                    <p class="feature-desc">Send and manage skill exchange requests with a clear workflow. Accept, complete, and review — all in one place.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:rgba(245,158,11,0.08); color:#D97706;">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Reputation System</h3>
+                    <p class="feature-desc">After each swap, leave and receive reviews. Build a reputation that reflects your skills and reliability.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:rgba(6,182,212,0.08); color:#0891B2;">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Real-time Notifications</h3>
+                    <p class="feature-desc">Never miss a request or message. Get instant notifications for incoming requests, acceptances, and completions.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:rgba(239,68,68,0.08); color:#DC2626;">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Discover Community</h3>
+                    <p class="feature-desc">Browse profiles across departments and semesters. Filter by skill, availability, and department to find your best match.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════ HOW IT WORKS ══════════ -->
+<section class="how-section" id="how-it-works">
+    <div class="container">
+        <div class="row align-items-start g-5">
+            <div class="col-lg-5">
+                <span class="section-label">How It Works</span>
+                <h2 class="section-title">Exchange skills in 4 simple steps</h2>
+                <p class="section-subtitle">From registration to your first completed swap — the whole process is seamless and built around you.</p>
+                <a th:href="@{/register}" href="/register" class="btn-hero-primary mt-4 d-inline-flex">
+                    <i class="bi bi-play-fill"></i> Start Now
+                </a>
+            </div>
+            <div class="col-lg-7">
+                <div class="timeline-step">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Create Your Profile</h4>
+                        <p class="step-desc">Sign up and fill in your department, semester and bio. Add the skills you can teach and the skills you want to learn.</p>
+                    </div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Find Your Match</h4>
+                        <p class="step-desc">Browse smart matches scored by skill compatibility. Filter by department, availability and skill category to refine results.</p>
+                    </div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Send a Swap Request</h4>
+                        <p class="step-desc">Choose a skill you'll teach and a skill you want to learn. Add a personal message and send your swap request.</p>
+                    </div>
+                </div>
+                <div class="timeline-step" style="padding-bottom:0;">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Learn, Teach &amp; Review</h4>
+                        <p class="step-desc">Complete the swap and leave a review for your partner. Build your reputation and reputation grows with every exchange.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════ WHY SKILLBRIDGE ══════════ -->
+<section class="why-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="section-label">The SkillBridge Advantage</span>
+                <h2 class="section-title">Why students choose<br>SkillBridge</h2>
+                <div class="mt-4">
+                    <div class="why-item">
+                        <div class="why-icon"><i class="bi bi-cash-coin"></i></div>
+                        <div class="why-text">
+                            <h5>Zero cost, maximum value</h5>
+                            <p>No tuition fees. You trade time and knowledge — the most valuable currencies a student has.</p>
+                        </div>
+                    </div>
+                    <div class="why-item">
+                        <div class="why-icon"><i class="bi bi-clock-fill"></i></div>
+                        <div class="why-text">
+                            <h5>Learn at your pace</h5>
+                            <p>Schedule sessions when both partners are available. Online, offline, or both — you decide.</p>
+                        </div>
+                    </div>
+                    <div class="why-item">
+                        <div class="why-icon"><i class="bi bi-diagram-3-fill"></i></div>
+                        <div class="why-text">
+                            <h5>Built for your college</h5>
+                            <p>Designed for Engineering students. Understands semester cycles, department diversity, and academic context.</p>
+                        </div>
+                    </div>
+                    <div class="why-item" style="margin-bottom:0;">
+                        <div class="why-icon" style="background:var(--sb-accent);"><i class="bi bi-graph-up-arrow"></i></div>
+                        <div class="why-text">
+                            <h5>Grow your profile</h5>
+                            <p>Every completed swap adds to your verified skill portfolio. Stand out when you apply for internships and jobs.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="p-4 p-lg-5" style="background:rgba(37,99,235,0.04); border:1px solid rgba(37,99,235,0.12); border-radius:20px;">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div style="width:8px;height:8px;border-radius:50%;background:#10B981;"></div>
+                        <span style="font-size:0.8rem;color:var(--sb-text-muted);font-weight:500;">Recent activity</span>
+                    </div>
+                    <div class="d-flex flex-column gap-3">
+                        <div style="background:#fff;border:1px solid var(--sb-border);border-radius:12px;padding:1rem;">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span style="width:28px;height:28px;border-radius:50%;background:rgba(37,99,235,0.1);color:#2563EB;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;">A</span>
+                                <span style="font-size:0.875rem;font-weight:600;">Alice</span>
+                                <span class="ms-auto" style="font-size:0.7rem;background:rgba(16,185,129,0.1);color:#059669;padding:0.125rem 0.5rem;border-radius:9999px;font-weight:600;border:1px solid rgba(16,185,129,0.2);">Completed</span>
+                            </div>
+                            <p style="font-size:0.8125rem;color:var(--sb-text-muted);margin:0;">Taught <strong>Python</strong> • Learned <strong>Graphic Design</strong></p>
+                        </div>
+                        <div style="background:#fff;border:1px solid var(--sb-border);border-radius:12px;padding:1rem;">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span style="width:28px;height:28px;border-radius:50%;background:rgba(124,58,237,0.1);color:#7C3AED;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;">R</span>
+                                <span style="font-size:0.875rem;font-weight:600;">Rohit</span>
+                                <span class="ms-auto" style="font-size:0.7rem;background:rgba(37,99,235,0.1);color:#2563EB;padding:0.125rem 0.5rem;border-radius:9999px;font-weight:600;border:1px solid rgba(37,99,235,0.2);">Accepted</span>
+                            </div>
+                            <p style="font-size:0.8125rem;color:var(--sb-text-muted);margin:0;">Swap with <strong>Priya</strong> — Java ↔ UI/UX</p>
+                        </div>
+                        <div style="background:#fff;border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:1rem;">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <i class="bi bi-star-fill" style="color:#F59E0B;font-size:0.9rem;"></i>
+                                <span style="font-size:0.875rem;font-weight:600;">New 5★ Review</span>
+                                <span class="ms-auto" style="font-size:0.7rem;color:var(--sb-text-muted);">2 min ago</span>
+                            </div>
+                            <p style="font-size:0.8125rem;color:var(--sb-text-muted);margin:0;">"Alice was an amazing teacher. Highly recommend!" — Rohit</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════ CTA BANNER ══════════ -->
+<section class="cta-section">
+    <div class="container position-relative">
+        <div class="mb-2" style="font-size:0.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.5);">Ready to start?</div>
+        <h2 class="cta-title">Join SkillBridge today.<br>Your next skill is one swap away.</h2>
+        <p class="cta-sub">Connect with students who have exactly what you need — and need exactly what you have.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a th:href="@{/register}" href="/register" class="btn-cta-white">
+                <i class="bi bi-rocket-takeoff-fill"></i> Create Free Account
+            </a>
+            <a th:href="@{/login}" href="/login" class="btn-cta-outline">
+                <i class="bi bi-box-arrow-in-right"></i> Sign In
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="land-footer">
+    <div class="container">
+        <a href="/" class="f-brand">
+            <i class="bi bi-layers-half"></i> SkillBridge
+        </a>
+        <p style="margin-bottom:0.125rem; color:rgba(255,255,255,0.7);">College of Engineering Thalassery</p>
+        <p style="margin-bottom:0; color:rgba(255,255,255,0.7);">Department of Computer Science &amp; Engineering</p>
+        <hr class="f-divider">
+        <p style="margin:0; font-size:0.8rem;">Mini Project · Academic Year 2025–26 · All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

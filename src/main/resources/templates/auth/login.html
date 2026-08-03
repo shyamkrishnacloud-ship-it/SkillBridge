@@ -1,84 +1,298 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SkillBridge</title>
+    <title>Sign In — SkillBridge</title>
+    <meta name="description"
+        content="Sign in to your SkillBridge account to start exchanging skills with fellow students.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style th:replace="~{fragments/navbar :: global-styles}"></style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        .login-container {
-            max-width: 420px;
-            margin-top: 8vh;
+        body {
+            font-family: Arial, sans-serif;
         }
+    </style>
+    <style>
+        /* Login page layout */
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auth-layout {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .auth-panel {
+            background: #fff;
+            border: 1px solid var(--sb-border);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 440px;
+            /* overflow: hidden removed — was clipping auth-body in flex contexts */
+        }
+
         .auth-header {
-            text-align: center;
-            padding: 30px 20px;
-            border-radius: 12px 12px 0 0;
-            background: linear-gradient(135deg, var(--sb-primary), #3B82F6);
-            color: white;
+            padding: 2.5rem 2.5rem 0;
         }
-        .auth-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
+
+        .auth-body {
+            display: block;
+            /* explicit — prevents flex/grid from collapsing it */
+            padding: 2rem 2.5rem 2.5rem;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 800;
+            font-size: 1.125rem;
+            color: var(--sb-primary);
+            text-decoration: none;
+            margin-bottom: 2rem;
+        }
+
+        .auth-logo .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .auth-title {
+            font-size: 1.625rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--sb-text);
+            margin-bottom: 0.375rem;
+        }
+
+        .auth-sub {
+            font-size: 0.9375rem;
+            color: var(--sb-text-muted);
+            margin-bottom: 0;
+        }
+
+        .form-field {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--sb-text);
+            margin-bottom: 0.375rem;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap .input-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--sb-text-muted);
+            font-size: 1rem;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            padding: 0.6875rem 0.875rem 0.6875rem 2.5rem;
+            border: 1px solid var(--sb-border);
+            border-radius: 9px;
+            font-size: 0.9375rem;
+            color: var(--sb-text);
+            background: var(--sb-surface);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .input-wrap input:focus {
+            outline: none;
+            border-color: var(--sb-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .input-wrap input::placeholder {
+            color: var(--sb-text-light);
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 9px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            background: var(--sb-primary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-auth:hover {
+            background: var(--sb-primary-hover);
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .auth-footer-links {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--sb-border);
+            margin-top: 1.5rem;
+        }
+
+        .auth-footer-links p {
+            font-size: 0.875rem;
+            color: var(--sb-text-muted);
+            margin: 0 0 0.75rem;
+        }
+
+        .auth-footer-links a {
+            color: var(--sb-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.8125rem;
+            color: var(--sb-text-muted);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: var(--sb-text);
+        }
+
+        .flash-msg {
+            border-radius: 9px;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid;
+        }
+
+        .flash-success {
+            background: rgba(16, 185, 129, 0.06);
+            color: #065F46;
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .flash-error {
+            background: rgba(239, 68, 68, 0.06);
+            color: #991B1B;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .flash-info {
+            background: rgba(37, 99, 235, 0.06);
+            color: #1E3A8A;
+            border-color: rgba(37, 99, 235, 0.15);
         }
     </style>
 </head>
+
 <body>
-
-<div class="container login-container mb-5">
-    
-    <!-- Success Message from Registration -->
-    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i><span th:text="${successMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    
-    <!-- Login Error Message -->
-    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>Invalid username or password.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    
-    <!-- Logout Message -->
-    <div th:if="${param.logout}" class="alert alert-info alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
-        <i class="bi bi-info-circle-fill me-2"></i>You have been logged out successfully.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <div class="sb-card overflow-hidden">
-        <div class="auth-header">
-            <i class="bi bi-person-circle auth-icon"></i>
-            <h2 class="fw-bold mb-1">Welcome Back</h2>
-            <p class="mb-0 text-white-50">Sign in to SkillBridge</p>
-        </div>
-        <div class="card-body p-4 p-md-5 bg-white">
-            <form th:action="@{/login}" method="post">
-                <div class="mb-4">
-                    <label for="username" class="form-label fw-medium text-muted">Username</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
-                        <input type="text" class="form-control bg-light border-start-0 ps-0" id="username" name="username" placeholder="Enter your username" required autofocus>
-                    </div>
+    <div class="auth-layout">
+        <div class="auth-panel">
+            <div class="auth-header">
+                <a th:href="@{/}" class="auth-logo">
+                    <span class="logo-icon"><i class="bi bi-layers-half"></i></span>
+                    SkillBridge
+                </a>
+                <h1 class="auth-title">Welcome back</h1>
+                <p class="auth-sub">Sign in to your account to continue</p>
+            </div>
+            <div class="auth-body">
+                <!-- Flash messages -->
+                <div th:if="${successMessage}" class="flash-msg flash-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span th:text="${successMessage}"></span>
                 </div>
-                <div class="mb-4">
-                    <label for="password" class="form-label fw-medium text-muted">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                        <input type="password" class="form-control bg-light border-start-0 ps-0" id="password" name="password" placeholder="Enter your password" required>
-                    </div>
+                <div th:if="${param.error}" class="flash-msg flash-error">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    Invalid username or password. Please try again.
                 </div>
-                <button type="submit" class="btn btn-sb-primary w-100 py-2 fs-5 mt-2">Sign In</button>
-            </form>
-            
-            <div class="mt-4 text-center">
-                <p class="text-muted mb-2">Don't have an account? <a th:href="@{/register}" class="text-decoration-none fw-semibold">Sign up here</a></p>
-                <a th:href="@{/}" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
+                <div th:if="${param.logout}" class="flash-msg flash-info">
+                    <i class="bi bi-info-circle-fill"></i>
+                    You have been logged out successfully.
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="form-field">
+                        <label for="username">Username</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-person input-icon"></i>
+                            <input type="text" id="username" name="username" placeholder="Enter your username" required
+                                autofocus>
+                        </div>
+                    </div>
+                    <div class="form-field" style="margin-bottom:1.75rem;">
+                        <label for="password">Password</label>
+                        <div class="input-wrap">
+                            <i class="bi bi-lock input-icon"></i>
+                            <input type="password" id="password" name="password" placeholder="Enter your password"
+                                required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-auth">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In
+                    </button>
+                </form>
+
+                <div class="auth-footer-links">
+                    <p>Don't have an account? <a th:href="@{/register}">Create one free</a></p>
+                    <a th:href="@{/}" class="back-link">
+                        <i class="bi bi-arrow-left"></i> Back to homepage
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -3,13 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Incoming Requests - SkillBridge</title>
+    <title>Incoming Requests — SkillBridge</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        .request-header {
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            background-color: rgba(0,0,0,0.015);
+        .tab-toggle {
+            display: inline-flex;
+            background: var(--sb-bg);
+            border: 1px solid var(--sb-border);
+            border-radius: 10px;
+            padding: 3px;
+            gap: 3px;
+        }
+        .tab-btn {
+            padding: 0.4375rem 1.25rem;
+            border-radius: 7px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            color: var(--sb-text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        .tab-btn.active {
+            background: #fff;
+            color: var(--sb-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .tab-btn:not(.active):hover { color: var(--sb-text); background: rgba(255,255,255,0.5); }
+        .req-card {
+            background: #fff;
+            border: 1px solid var(--sb-border);
+            border-radius: var(--sb-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--sb-shadow-sm);
+            transition: all 0.2s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .req-card:hover { box-shadow: var(--sb-shadow); border-color: var(--sb-border-hover); }
+        .req-card-head {
+            padding: 1rem 1.375rem;
+            border-bottom: 1px solid var(--sb-border);
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--sb-bg);
+        }
+        .req-card-body { padding: 1.375rem; flex: 1; display: flex; flex-direction: column; }
+        .req-card-foot {
+            padding: 1rem 1.375rem;
+            border-top: 1px solid var(--sb-border);
+            background: var(--sb-bg);
+            display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 0.375rem;
+            padding: 0.3125rem 0.875rem;
+            border-radius: 9999px; font-size: 0.75rem; font-weight: 700;
+            border: 1px solid; text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .sb-PENDING  { background:rgba(245,158,11,0.08);  color:#D97706; border-color:rgba(245,158,11,0.2); }
+        .sb-ACCEPTED { background:rgba(6,182,212,0.08);   color:#0891B2; border-color:rgba(6,182,212,0.2); }
+        .sb-COMPLETED{ background:rgba(16,185,129,0.08);  color:#059669; border-color:rgba(16,185,129,0.2); }
+        .sb-REJECTED { background:rgba(239,68,68,0.08);   color:#DC2626; border-color:rgba(239,68,68,0.2); }
+        .sb-CANCELLED{ background:rgba(100,116,139,0.08); color:#475569; border-color:rgba(100,116,139,0.2); }
+        .swap-detail {
+            background: var(--sb-bg);
+            border: 1px solid var(--sb-border);
+            border-radius: var(--sb-radius);
+            padding: 0.875rem 1rem;
+        }
+        .swap-row {
+            display: flex; align-items: flex-start; gap: 0.625rem;
+            font-size: 0.875rem;
+        }
+        .swap-row + .swap-row { margin-top: 0.625rem; padding-top: 0.625rem; border-top: 1px solid var(--sb-border); }
+        .swap-icon { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; margin-top: 1px; }
+        .msg-block {
+            background: var(--sb-bg);
+            border: 1px solid var(--sb-border);
+            border-left: 3px solid var(--sb-primary);
+            border-radius: var(--sb-radius);
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            color: var(--sb-text-muted);
+            font-style: italic;
         }
     </style>
 </head>
@@ -17,119 +98,143 @@
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container mt-4 mt-md-5 mb-5">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div class="d-flex align-items-center gap-3">
-            <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
-                <i class="bi bi-inbox-fill fs-3"></i>
+<div class="container sb-page">
+
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5">
+        <div class="sb-section-header mb-0" style="margin-bottom:0!important;">
+            <div class="sb-section-icon" style="background:rgba(37,99,235,0.08);color:#2563EB;">
+                <i class="bi bi-arrow-left-right"></i>
             </div>
             <div>
-                <h2 class="mb-0 fw-bold text-dark">Swap Requests</h2>
-                <p class="text-muted mb-0">Manage your skill exchange connections</p>
+                <h1 class="sb-page-title">Swap Requests</h1>
+                <p class="sb-page-subtitle">Manage your incoming skill exchange requests.</p>
             </div>
         </div>
-        <div class="d-flex bg-light p-1 rounded-pill border">
-            <a th:href="@{/requests/incoming}" class="btn btn-sb-primary rounded-pill px-4 fw-medium flex-grow-1">Incoming</a>
-            <a th:href="@{/requests/outgoing}" class="btn btn-light rounded-pill px-4 fw-medium text-muted flex-grow-1 border-0 bg-transparent">Outgoing</a>
+        <div class="tab-toggle">
+            <a th:href="@{/requests/incoming}" class="tab-btn active">
+                <i class="bi bi-box-arrow-in-down"></i> Incoming
+            </a>
+            <a th:href="@{/requests/outgoing}" class="tab-btn">
+                <i class="bi bi-box-arrow-up"></i> Outgoing
+            </a>
         </div>
     </div>
 
-    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2" role="alert">
-        <i class="bi bi-check-circle-fill"></i>
-        <span th:text="${successMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <!-- Flash -->
+    <div th:if="${successMessage}" class="sb-alert sb-alert-success mb-4">
+        <i class="bi bi-check-circle-fill"></i><span th:text="${successMessage}"></span>
     </div>
-    
-    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2" role="alert">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <span th:text="${errorMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div th:if="${errorMessage}" class="sb-alert sb-alert-danger mb-4">
+        <i class="bi bi-exclamation-triangle-fill"></i><span th:text="${errorMessage}"></span>
     </div>
 
-    <h5 class="mb-4 fw-bold text-dark"><i class="bi bi-box-arrow-in-down me-2 text-primary"></i>Incoming Requests</h5>
-    
-    <div th:if="${#lists.isEmpty(requests)}" class="sb-card text-center py-5 border-0">
-        <div class="card-body py-4">
-            <div class="text-muted mb-3"><i class="bi bi-envelope-open" style="font-size: 3rem;"></i></div>
-            <h5 class="fw-bold mb-2">No incoming requests</h5>
-            <p class="text-muted mb-4">You don't have any incoming swap requests yet.</p>
-            <a th:href="@{/matches}" class="btn btn-sb-primary px-4 py-2 rounded-pill shadow-sm">Find Partners</a>
-        </div>
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(requests)}" class="sb-card sb-empty">
+        <div class="sb-empty-icon"><i class="bi bi-envelope-open"></i></div>
+        <h4>No incoming requests</h4>
+        <p>You haven't received any swap requests yet. Find partners and they can reach out to you.</p>
+        <a th:href="@{/matches}" class="btn-sb-primary"><i class="bi bi-people-fill"></i> Find Partners</a>
     </div>
 
-    <div class="row row-cols-1 row-cols-lg-2 g-4 mt-2">
+    <!-- Request Cards -->
+    <div class="row row-cols-1 row-cols-lg-2 g-4" th:if="${not #lists.isEmpty(requests)}">
         <div class="col" th:each="req : ${requests}">
-            <div class="sb-card h-100 border">
-                <div class="card-header request-header px-4 py-3 d-flex justify-content-between align-items-center">
-                    <span class="badge rounded-pill px-3 py-2 fw-medium"
-                          th:classappend="${req.status.name() == 'PENDING' ? 'bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle' : 
-                                          (req.status.name() == 'ACCEPTED' ? 'bg-info bg-opacity-10 text-info-emphasis border border-info-subtle' : 
-                                          (req.status.name() == 'COMPLETED' ? 'bg-success bg-opacity-10 text-success border border-success-subtle' : 'bg-danger bg-opacity-10 text-danger border border-danger-subtle'))}">
-                        <i class="bi me-1" th:classappend="${req.status.name() == 'PENDING' ? 'bi-hourglass-split' : (req.status.name() == 'ACCEPTED' ? 'bi-check-circle' : (req.status.name() == 'COMPLETED' ? 'bi-trophy' : 'bi-x-circle'))}"></i>
+            <div class="req-card">
+                <!-- Header -->
+                <div class="req-card-head">
+                    <span class="status-badge"
+                          th:classappend="${'sb-' + req.status.name()}"
+                          th:with="s=${req.status.name()}">
+                        <i class="bi" th:classappend="${s == 'PENDING' ? 'bi-hourglass-split' : (s == 'ACCEPTED' ? 'bi-check-circle-fill' : (s == 'COMPLETED' ? 'bi-trophy-fill' : 'bi-x-circle-fill'))}"></i>
                         <span th:text="${req.status}">STATUS</span>
                     </span>
-                    <small class="text-muted fw-medium"><i class="bi bi-calendar3 me-1"></i><span th:text="${#temporals.format(req.createdDate, 'dd MMM yyyy')}">Date</span></small>
+                    <span style="font-size:0.8rem;color:var(--sb-text-muted);">
+                        <i class="bi bi-calendar3 me-1"></i>
+                        <span th:text="${#temporals.format(req.createdDate, 'dd MMM yyyy')}">Date</span>
+                    </span>
                 </div>
-                <div class="card-body p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center gap-3 mb-4">
-                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold fs-5 border" style="width: 48px; height: 48px;">
+
+                <!-- Body -->
+                <div class="req-card-body">
+                    <!-- From user -->
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="sb-avatar" style="width:44px;height:44px;">
                             <span th:text="${#strings.substring(req.senderUsername,0,1).toUpperCase()}">U</span>
                         </div>
                         <div>
-                            <h6 class="text-muted small mb-0 fw-semibold text-uppercase letter-spacing-1">From</h6>
-                            <h5 class="card-title mb-0 fw-bold">
-                                <a th:href="@{/profile/{username}(username=${req.senderUsername})}" class="text-decoration-none text-dark stretched-link-hover" th:text="${req.senderUsername}">User</a>
-                            </h5>
+                            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--sb-text-muted);">From</div>
+                            <a th:href="@{/profile/{u}(u=${req.senderUsername})}"
+                               style="font-size:1rem;font-weight:700;color:var(--sb-text);text-decoration:none;"
+                               th:text="${req.senderUsername}">User</a>
                         </div>
                     </div>
-                    
-                    <div class="bg-light p-3 rounded-3 border mb-3">
-                        <div class="d-flex align-items-start mb-2">
-                            <i class="bi bi-arrow-right-circle-fill text-success mt-1 me-2"></i>
+
+                    <!-- Swap details -->
+                    <div class="swap-detail mb-3">
+                        <div class="swap-row">
+                            <div class="swap-icon" style="background:rgba(16,185,129,0.1);color:#059669;">
+                                <i class="bi bi-mortarboard-fill"></i>
+                            </div>
                             <div>
-                                <small class="text-muted fw-semibold d-block">They offer to teach you:</small>
-                                <span class="fw-medium text-dark" th:text="${req.offeredSkillName}">Skill</span>
+                                <div style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--sb-text-muted);margin-bottom:0.125rem;">They offer to teach you</div>
+                                <div style="font-weight:600;color:var(--sb-text);" th:text="${req.offeredSkillName}">Skill</div>
                             </div>
                         </div>
-                        <div class="d-flex align-items-start">
-                            <i class="bi bi-arrow-left-circle-fill text-warning mt-1 me-2"></i>
+                        <div class="swap-row">
+                            <div class="swap-icon" style="background:rgba(245,158,11,0.1);color:#D97706;">
+                                <i class="bi bi-lightbulb-fill"></i>
+                            </div>
                             <div>
-                                <small class="text-muted fw-semibold d-block">They want to learn:</small>
-                                <span class="fw-medium text-dark" th:text="${req.requestedSkillName}">Skill</span>
+                                <div style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--sb-text-muted);margin-bottom:0.125rem;">They want to learn</div>
+                                <div style="font-weight:600;color:var(--sb-text);" th:text="${req.requestedSkillName}">Skill</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mb-4 flex-grow-1" th:if="${req.message != null and !req.message.isEmpty()}">
-                        <small class="text-muted fw-semibold d-block mb-1 text-uppercase letter-spacing-1" style="font-size: 0.75rem;">Message</small>
-                        <div class="p-3 bg-white border rounded-3 text-dark fst-italic position-relative">
-                            <i class="bi bi-quote position-absolute text-light" style="font-size: 3rem; top: -10px; left: 5px; z-index: 0;"></i>
-                            <span class="position-relative z-1" th:text="${req.message}"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-auto pt-3 border-top d-flex flex-column gap-2">
-                        <div class="d-flex gap-2" th:if="${req.status.name() == 'PENDING'}">
-                            <form th:action="@{/requests/{id}/accept(id=${req.id})}" method="post" class="flex-grow-1">
-                                <button type="submit" class="btn btn-sb-accent w-100 rounded-pill shadow-sm"><i class="bi bi-check-lg me-1"></i> Accept</button>
-                            </form>
-                            <form th:action="@{/requests/{id}/reject(id=${req.id})}" method="post" class="flex-grow-1">
-                                <button type="submit" class="btn btn-light border text-danger fw-medium w-100 rounded-pill transition-hover"><i class="bi bi-x-lg me-1"></i> Reject</button>
-                            </form>
-                        </div>
-                        
-                        <form th:if="${req.status.name() == 'ACCEPTED'}" th:action="@{/requests/{id}/complete(id=${req.id})}" method="post">
-                            <input type="hidden" name="source" value="incoming">
-                            <button type="submit" class="btn btn-sb-primary w-100 rounded-pill shadow-sm"><i class="bi bi-flag-fill me-1"></i> Mark as Completed</button>
+                    <!-- Message -->
+                    <div class="msg-block flex-grow-1" th:if="${req.message != null and !req.message.isEmpty()}" th:text="${req.message}"></div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="req-card-foot">
+                    <!-- PENDING: Accept / Reject -->
+                    <div class="d-flex gap-2" th:if="${req.status.name() == 'PENDING'}">
+                        <form th:action="@{/requests/{id}/accept(id=${req.id})}" method="post" class="flex-grow-1">
+                            <button type="submit" class="btn-sb-accent w-100" style="justify-content:center;">
+                                <i class="bi bi-check-lg"></i> Accept
+                            </button>
                         </form>
-                        
-                        <a th:if="${req.status.name() == 'ACCEPTED' or req.status.name() == 'COMPLETED'}" 
-                           th:href="@{/profile/partner/{username}(username=${req.senderUsername})}" 
-                           class="btn btn-light border fw-medium text-primary w-100 rounded-pill transition-hover"><i class="bi bi-person-badge me-1"></i> View Partner Details</a>
-                        
-                        <a th:if="${req.status.name() == 'COMPLETED' and !req.hasReviewed}" th:href="@{/reviews/new/{id}(id=${req.id})}" class="btn btn-warning w-100 rounded-pill fw-medium shadow-sm"><i class="bi bi-star-fill me-1"></i> Leave Review</a>
-                        <button th:if="${req.status.name() == 'COMPLETED' and req.hasReviewed}" class="btn btn-light border text-success fw-medium w-100 rounded-pill" disabled><i class="bi bi-check2-all me-1"></i> Review Submitted</button>
+                        <form th:action="@{/requests/{id}/reject(id=${req.id})}" method="post" class="flex-grow-1">
+                            <button type="submit" class="btn-sb-danger w-100" style="justify-content:center;">
+                                <i class="bi bi-x-lg"></i> Reject
+                            </button>
+                        </form>
                     </div>
+                    <!-- ACCEPTED: Mark Completed -->
+                    <form th:if="${req.status.name() == 'ACCEPTED'}" th:action="@{/requests/{id}/complete(id=${req.id})}" method="post">
+                        <input type="hidden" name="source" value="incoming">
+                        <button type="submit" class="btn-sb-primary w-100" style="justify-content:center;">
+                            <i class="bi bi-flag-fill"></i> Mark as Completed
+                        </button>
+                    </form>
+                    <!-- ACCEPTED or COMPLETED: View Contact -->
+                    <a th:if="${req.status.name() == 'ACCEPTED' or req.status.name() == 'COMPLETED'}"
+                       th:href="@{/profile/partner/{u}(u=${req.senderUsername})}"
+                       class="btn-sb-outline w-100" style="justify-content:center;font-size:0.875rem;">
+                        <i class="bi bi-person-lines-fill"></i> View Contact Details
+                    </a>
+                    <!-- COMPLETED + not reviewed: Leave Review -->
+                    <a th:if="${req.status.name() == 'COMPLETED' and !req.hasReviewed}"
+                       th:href="@{/reviews/new/{id}(id=${req.id})}"
+                       class="btn-sb-primary w-100" style="justify-content:center;background:#D97706;box-shadow:0 1px 2px rgba(217,119,6,0.2);">
+                        <i class="bi bi-star-fill"></i> Leave a Review
+                    </a>
+                    <!-- COMPLETED + reviewed -->
+                    <button th:if="${req.status.name() == 'COMPLETED' and req.hasReviewed}"
+                            class="btn-sb-outline w-100" style="justify-content:center;color:#059669;" disabled>
+                        <i class="bi bi-check2-all"></i> Review Submitted
+                    </button>
                 </div>
             </div>
         </div>
@@ -137,5 +242,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: active-nav-script}"></script>
 </body>
 </html>
