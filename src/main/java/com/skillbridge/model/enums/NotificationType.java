@@ -1,5 +1,10 @@
 package com.skillbridge.model.enums;
 
 public enum NotificationType {
-    REQUEST, REVIEW, SYSTEM
+    REQUEST_RECEIVED, 
+    REQUEST_ACCEPTED, 
+    REQUEST_REJECTED, 
+    REQUEST_COMPLETED, 
+    REVIEW_RECEIVED,
+    SYSTEM
 }

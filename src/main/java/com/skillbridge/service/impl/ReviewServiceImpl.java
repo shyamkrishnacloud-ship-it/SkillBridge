@@ -5,10 +5,12 @@ import com.skillbridge.dto.ReviewDto;
 import com.skillbridge.model.entity.Review;
 import com.skillbridge.model.entity.Student;
 import com.skillbridge.model.entity.SwapRequest;
+import com.skillbridge.model.enums.NotificationType;
 import com.skillbridge.model.enums.RequestStatus;
 import com.skillbridge.repository.ReviewRepository;
 import com.skillbridge.repository.StudentRepository;
 import com.skillbridge.repository.SwapRequestRepository;
+import com.skillbridge.service.NotificationService;
 import com.skillbridge.service.ReviewService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +24,16 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final StudentRepository studentRepository;
     private final SwapRequestRepository swapRequestRepository;
+    private final NotificationService notificationService;
 
     public ReviewServiceImpl(ReviewRepository reviewRepository,
                              StudentRepository studentRepository,
-                             SwapRequestRepository swapRequestRepository) {
+                             SwapRequestRepository swapRequestRepository,
+                             NotificationService notificationService) {
         this.reviewRepository = reviewRepository;
         this.studentRepository = studentRepository;
         this.swapRequestRepository = swapRequestRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -69,7 +74,14 @@ public class ReviewServiceImpl implements ReviewService {
         review.setRating(dto.getRating());
         review.setComment(dto.getComment());
 
-        reviewRepository.save(review);
+        review = reviewRepository.save(review);
+
+        notificationService.createNotification(
+                reviewee,
+                "You received a new " + dto.getRating() + "★ review.",
+                NotificationType.REVIEW_RECEIVED,
+                review.getId()
+        );
     }
 
     @Override

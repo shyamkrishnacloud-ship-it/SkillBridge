@@ -44,6 +44,7 @@ public class ProfileService {
         dto.setAvailabilityMode(student.getAvailabilityMode());
         dto.setPreferredTime(student.getPreferredTime());
         dto.setExistingProfilePicturePath(student.getProfilePicturePath());
+        dto.setPhoneNumber(student.getPhoneNumber());
         Double avg = reviewRepository.calculateAverageRatingByStudentId(student.getId());
         dto.setAverageRating(avg != null ? avg : 0.0);
         
@@ -66,6 +67,9 @@ public class ProfileService {
         student.setBio(profileDto.getBio());
         student.setAvailabilityMode(profileDto.getAvailabilityMode());
         student.setPreferredTime(profileDto.getPreferredTime());
+        if (profileDto.getPhoneNumber() != null) {
+            student.setPhoneNumber(profileDto.getPhoneNumber());
+        }
 
         // Handle profile picture upload
         MultipartFile file = profileDto.getProfilePicture();

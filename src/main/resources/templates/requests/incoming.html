@@ -74,8 +74,12 @@
                         <button type="submit" class="btn btn-info text-white w-100">Mark as Completed</button>
                     </form>
                     
-                    <a th:if="${req.status.name() == 'COMPLETED' and !req.hasReviewed}" th:href="@{/reviews/new/{id}(id=${req.id})}" class="btn btn-warning w-100">Leave Review</a>
-                    <button th:if="${req.status.name() == 'COMPLETED' and req.hasReviewed}" class="btn btn-secondary w-100" disabled>Review Submitted</button>
+                    <a th:if="${req.status.name() == 'ACCEPTED' or req.status.name() == 'COMPLETED'}" 
+                       th:href="@{/profile/partner/{username}(username=${req.senderUsername})}" 
+                       class="btn btn-outline-primary w-100 mt-2">View Partner Details</a>
+                    
+                    <a th:if="${req.status.name() == 'COMPLETED' and !req.hasReviewed}" th:href="@{/reviews/new/{id}(id=${req.id})}" class="btn btn-warning w-100 mt-2">Leave Review</a>
+                    <button th:if="${req.status.name() == 'COMPLETED' and req.hasReviewed}" class="btn btn-secondary w-100 mt-2" disabled>Review Submitted</button>
                 </div>
             </div>
         </div>

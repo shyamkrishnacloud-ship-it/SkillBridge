@@ -30,6 +30,9 @@ public class Student extends BaseEntity {
 
     private String profilePicturePath;
 
+    @Column(length = 20)
+    private String phoneNumber;
+
     @Enumerated(EnumType.STRING)
     private AvailabilityMode availabilityMode = AvailabilityMode.OFFLINE;
 
@@ -81,4 +84,7 @@ public class Student extends BaseEntity {
 
     public Integer getCompletedSwaps() { return completedSwaps; }
     public void setCompletedSwaps(Integer completedSwaps) { this.completedSwaps = completedSwaps; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 }

@@ -2,6 +2,7 @@ package com.skillbridge.dto;
 
 import com.skillbridge.model.enums.AvailabilityMode;
 import com.skillbridge.model.enums.PreferredTime;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +28,9 @@ public class ProfileDto {
     private Double averageRating;
     private Integer reviewCount;
     private Integer completedSwaps;
+
+    @Pattern(regexp = "^$|^[0-9]{10}$", message = "Phone number must be exactly 10 digits")
+    private String phoneNumber;
 
     // Getters and Setters
     public String getUsername() { return username; }
@@ -64,4 +68,7 @@ public class ProfileDto {
 
     public Integer getCompletedSwaps() { return completedSwaps; }
     public void setCompletedSwaps(Integer completedSwaps) { this.completedSwaps = completedSwaps; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 }

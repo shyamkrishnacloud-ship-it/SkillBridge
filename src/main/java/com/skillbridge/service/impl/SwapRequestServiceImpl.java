@@ -5,10 +5,12 @@ import com.skillbridge.dto.SwapRequestDto;
 import com.skillbridge.model.entity.Student;
 import com.skillbridge.model.entity.StudentSkill;
 import com.skillbridge.model.entity.SwapRequest;
+import com.skillbridge.model.enums.NotificationType;
 import com.skillbridge.model.enums.RequestStatus;
 import com.skillbridge.repository.StudentRepository;
 import com.skillbridge.repository.StudentSkillRepository;
 import com.skillbridge.repository.SwapRequestRepository;
+import com.skillbridge.service.NotificationService;
 import com.skillbridge.service.SwapRequestService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,15 +26,18 @@ public class SwapRequestServiceImpl implements SwapRequestService {
     private final StudentRepository studentRepository;
     private final StudentSkillRepository studentSkillRepository;
     private final com.skillbridge.repository.ReviewRepository reviewRepository;
+    private final NotificationService notificationService;
 
     public SwapRequestServiceImpl(SwapRequestRepository swapRequestRepository,
                                   StudentRepository studentRepository,
                                   StudentSkillRepository studentSkillRepository,
-                                  com.skillbridge.repository.ReviewRepository reviewRepository) {
+                                  com.skillbridge.repository.ReviewRepository reviewRepository,
+                                  NotificationService notificationService) {
         this.swapRequestRepository = swapRequestRepository;
         this.studentRepository = studentRepository;
         this.studentSkillRepository = studentSkillRepository;
         this.reviewRepository = reviewRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -81,7 +86,14 @@ public class SwapRequestServiceImpl implements SwapRequestService {
         request.setRequestedSkill(requestedSkill);
         request.setStatus(RequestStatus.PENDING);
         request.setMessage(creationDto.getMessage());
-        swapRequestRepository.save(request);
+        request = swapRequestRepository.save(request);
+
+        notificationService.createNotification(
+                receiver,
+                sender.getUsername() + " sent you a swap request.",
+                NotificationType.REQUEST_RECEIVED,
+                request.getId()
+        );
     }
 
     @Override
@@ -95,6 +107,13 @@ public class SwapRequestServiceImpl implements SwapRequestService {
         }
         request.setStatus(RequestStatus.ACCEPTED);
         swapRequestRepository.save(request);
+
+        notificationService.createNotification(
+                request.getRequester(),
+                request.getReceiver().getUsername() + " accepted your request.",
+                NotificationType.REQUEST_ACCEPTED,
+                request.getId()
+        );
     }
 
     @Override
@@ -108,6 +127,13 @@ public class SwapRequestServiceImpl implements SwapRequestService {
         }
         request.setStatus(RequestStatus.REJECTED);
         swapRequestRepository.save(request);
+
+        notificationService.createNotification(
+                request.getRequester(),
+                request.getReceiver().getUsername() + " rejected your request.",
+                NotificationType.REQUEST_REJECTED,
+                request.getId()
+        );
     }
 
     @Override
@@ -144,6 +170,25 @@ public class SwapRequestServiceImpl implements SwapRequestService {
         }
 
         swapRequestRepository.save(request);
+
+        if (request.getStatus() == RequestStatus.COMPLETED) {
+            String message = "Your " + request.getRequestedSkill().getSkill().getName() + " Skill Swap has been completed.";
+            String requesterMessage = "Your " + request.getRequestedSkill().getSkill().getName() + " Skill Swap has been completed.";
+            String receiverMessage = "Your " + request.getOfferedSkill().getSkill().getName() + " Skill Swap has been completed.";
+            
+            notificationService.createNotification(
+                    request.getRequester(),
+                    requesterMessage,
+                    NotificationType.REQUEST_COMPLETED,
+                    request.getId()
+            );
+            notificationService.createNotification(
+                    request.getReceiver(),
+                    receiverMessage,
+                    NotificationType.REQUEST_COMPLETED,
+                    request.getId()
+            );
+        }
     }
 
     @Override
@@ -175,6 +220,22 @@ public class SwapRequestServiceImpl implements SwapRequestService {
                 user1.getId(), 
                 user2.getId(), 
                 java.util.Arrays.asList(RequestStatus.PENDING, RequestStatus.ACCEPTED)
+        );
+    }
+
+    @Override
+    public boolean hasRelationship(String username1, String username2) {
+        Student user1 = studentRepository.findByUsernameAndIsActiveTrue(username1).orElse(null);
+        Student user2 = studentRepository.findByUsernameAndIsActiveTrue(username2).orElse(null);
+        
+        if (user1 == null || user2 == null) {
+            return false;
+        }
+
+        return swapRequestRepository.existsActiveRequestBetweenUsers(
+                user1.getId(), 
+                user2.getId(), 
+                java.util.Arrays.asList(RequestStatus.ACCEPTED, RequestStatus.COMPLETED)
         );
     }
 

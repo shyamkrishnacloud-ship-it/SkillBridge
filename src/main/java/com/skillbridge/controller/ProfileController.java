@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/profile")
@@ -118,5 +119,29 @@ public class ProfileController {
         }
 
         return "redirect:/profile";
+    }
+
+    @GetMapping("/partner/{username}")
+    public String viewPartnerDetails(@org.springframework.web.bind.annotation.PathVariable String username, Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        
+        String currentUsername = principal.getName();
+        if (currentUsername.equals(username)) {
+            return "redirect:/profile";
+        }
+        
+        // Strict Relationship Check
+        boolean hasRelationship = swapRequestService.hasRelationship(currentUsername, username);
+        
+        if (!hasRelationship) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied: You do not have an accepted or completed swap request with this user.");
+        }
+        
+        ProfileDto partnerProfile = profileService.getProfileByUsername(username);
+        model.addAttribute("partner", partnerProfile);
+        
+        return "profile/partner-details";
     }
 }

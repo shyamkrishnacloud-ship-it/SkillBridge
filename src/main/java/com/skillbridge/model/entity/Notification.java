@@ -27,6 +27,8 @@ public class Notification {
 
     private boolean isRead = false;
 
+    private Long referenceId;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
@@ -52,4 +54,7 @@ public class Notification {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public Long getReferenceId() { return referenceId; }
+    public void setReferenceId(Long referenceId) { this.referenceId = referenceId; }
 }
