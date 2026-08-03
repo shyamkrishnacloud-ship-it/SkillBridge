@@ -5,11 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile - SkillBridge</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        body { background-color: #f8f9fa; }
-        .edit-container { max-width: 800px; margin-top: 50px; }
-        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .card-header { background-color: #0d6efd; color: white; border-radius: 10px 10px 0 0 !important; padding: 20px; }
+        .edit-container { max-width: 850px; margin-top: 40px; }
+        .form-label {
+            font-weight: 500;
+            color: var(--sb-text-muted);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .form-control, .form-select {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--sb-border);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--sb-primary);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+        }
+        .section-title {
+            color: var(--sb-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -17,95 +39,105 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="container edit-container mb-5">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="mb-0">Edit Profile</h3>
+    <div class="sb-card">
+        <div class="card-header bg-white border-bottom pt-4 pb-3">
+            <h4 class="fw-bold mb-0"><i class="bi bi-pencil-square text-primary me-2"></i>Edit Profile</h4>
         </div>
-        <div class="card-body p-4">
+        <div class="card-body p-4 p-md-5">
             
-            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <div th:if="${errorMessage}" class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
                 <span th:text="${errorMessage}"></span>
             </div>
 
-            <form th:action="@{/profile/edit}" th:object="${profileDto}" method="post" enctype="multipart/form-data">
+            <form th:action="@{/profile/edit}" th:object="${profileDto}" method="post" class="needs-validation" enctype="multipart/form-data">
                 
-                <h5 class="mb-3 border-bottom pb-2">Account Details (Read-only)</h5>
-                <div class="row mb-3">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control bg-light" th:field="*{username}" readonly>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control bg-light" th:field="*{email}" readonly>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="phoneNumber" class="form-label">Phone Number</label>
-                        <div class="input-group">
-                            <span class="input-group-text" id="phone-prefix">+91</span>
-                            <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}"
-                                   placeholder="10-digit mobile number" maxlength="10" pattern="[0-9]{10}" aria-describedby="phone-prefix">
+                <div class="mb-5">
+                    <h5 class="section-title border-bottom pb-2"><i class="bi bi-person-badge"></i> Account Details <span class="badge bg-light text-muted border fw-normal ms-2 text-uppercase" style="font-size: 0.7rem;">Read-only</span></h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control bg-light text-muted" th:field="*{username}" readonly>
                         </div>
-                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
-                        <small class="text-muted">Shared only with accepted swap partners.</small>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control bg-light text-muted" th:field="*{email}" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted border-end-0" id="phone-prefix">+91</span>
+                                <input type="tel" class="form-control border-start-0 ps-0" id="phoneNumber" th:field="*{phoneNumber}"
+                                       placeholder="10-digit mobile number" maxlength="10" pattern="[0-9]{10}" aria-describedby="phone-prefix">
+                            </div>
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                            <small class="text-muted"><i class="bi bi-shield-lock me-1"></i>Shared only with accepted partners.</small>
+                        </div>
                     </div>
                 </div>
 
-                <h5 class="mb-3 border-bottom pb-2">Academic & Personal Info</h5>
-                <div class="row mb-3">
-                    <div class="col-md-6 mb-3">
-                        <label for="department" class="form-label">Department</label>
-                        <input type="text" class="form-control" id="department" th:field="*{department}">
-                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></div>
+                <div class="mb-5">
+                    <h5 class="section-title border-bottom pb-2"><i class="bi bi-mortarboard"></i> Academic & Personal Info</h5>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label for="department" class="form-label">Department</label>
+                            <input type="text" class="form-control" id="department" th:field="*{department}" placeholder="e.g. Computer Science">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="semester" class="form-label">Semester</label>
+                            <input type="number" min="1" max="10" class="form-control" id="semester" th:field="*{semester}" placeholder="e.g. 5">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('semester')}" th:errors="*{semester}"></div>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="semester" class="form-label">Semester</label>
-                        <input type="number" min="1" max="10" class="form-control" id="semester" th:field="*{semester}">
-                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('semester')}" th:errors="*{semester}"></div>
+
+                    <div class="mb-2">
+                        <label for="bio" class="form-label">Bio</label>
+                        <textarea class="form-control" id="bio" rows="4" th:field="*{bio}" placeholder="Tell the community a bit about yourself, what you want to learn, and what you can teach..."></textarea>
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}"></div>
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label for="bio" class="form-label">Bio</label>
-                    <textarea class="form-control" id="bio" rows="4" th:field="*{bio}" placeholder="Tell us a bit about yourself..."></textarea>
-                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}"></div>
-                </div>
-
-                <h5 class="mb-3 border-bottom pb-2">Preferences</h5>
-                <div class="row mb-4">
-                    <div class="col-md-6 mb-3">
-                        <label for="availabilityMode" class="form-label">Availability Mode</label>
-                        <select class="form-select" id="availabilityMode" th:field="*{availabilityMode}">
-                            <option value="ONLINE">Online</option>
-                            <option value="OFFLINE">Offline</option>
-                            <option value="BOTH">Both</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="preferredTime" class="form-label">Preferred Time</label>
-                        <select class="form-select" id="preferredTime" th:field="*{preferredTime}">
-                            <option value="WEEKDAY">Weekday</option>
-                            <option value="WEEKEND">Weekend</option>
-                            <option value="ANYTIME">Anytime</option>
-                        </select>
+                <div class="mb-5">
+                    <h5 class="section-title border-bottom pb-2"><i class="bi bi-sliders"></i> Preferences</h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label for="availabilityMode" class="form-label">Availability Mode</label>
+                            <select class="form-select" id="availabilityMode" th:field="*{availabilityMode}">
+                                <option value="ONLINE">Online</option>
+                                <option value="OFFLINE">Offline</option>
+                                <option value="BOTH">Both</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="preferredTime" class="form-label">Preferred Time</label>
+                            <select class="form-select" id="preferredTime" th:field="*{preferredTime}">
+                                <option value="WEEKDAY">Weekday</option>
+                                <option value="WEEKEND">Weekend</option>
+                                <option value="ANYTIME">Anytime</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <h5 class="mb-3 border-bottom pb-2">Profile Picture</h5>
-                <div class="mb-4">
-                    <div class="d-flex align-items-center mb-2">
-                        <img th:if="${profileDto.existingProfilePicturePath != null}" th:src="@{${profileDto.existingProfilePicturePath}}" alt="Current Avatar" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; margin-right: 15px;">
+                <div class="mb-5">
+                    <h5 class="section-title border-bottom pb-2"><i class="bi bi-camera"></i> Profile Picture</h5>
+                    <div class="d-flex align-items-center gap-4">
                         <div>
-                            <label for="profilePicture" class="form-label mb-0">Upload New Picture</label>
-                            <input class="form-control" type="file" id="profilePicture" name="profilePicture" accept="image/png, image/jpeg">
-                            <small class="text-muted">Leave blank to keep existing picture.</small>
+                            <img th:if="${profileDto.existingProfilePicturePath != null}" th:src="@{${profileDto.existingProfilePicturePath}}" alt="Current Avatar" class="rounded-circle shadow-sm border border-2 border-white" style="width: 80px; height: 80px; object-fit: cover;">
+                            <img th:if="${profileDto.existingProfilePicturePath == null}" src="https://ui-avatars.com/api/?name=User&amp;background=random" alt="Default Profile Picture" class="rounded-circle shadow-sm border border-2 border-white" style="width: 80px; height: 80px; object-fit: cover;">
+                        </div>
+                        <div class="flex-grow-1">
+                            <label for="profilePicture" class="form-label mb-1">Upload New Picture</label>
+                            <input class="form-control form-control-sm" type="file" id="profilePicture" name="profilePicture" accept="image/png, image/jpeg">
+                            <small class="text-muted d-block mt-1">Leave blank to keep existing picture. Supported formats: PNG, JPG.</small>
                         </div>
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between">
-                    <a th:href="@{/profile}" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                    <a th:href="@{/profile}" class="btn btn-light border px-4 py-2 fw-medium text-dark rounded-pill shadow-sm">Cancel</a>
+                    <button type="submit" class="btn btn-sb-primary px-4 py-2 rounded-pill shadow-sm"><i class="bi bi-check2-circle me-1"></i> Save Changes</button>
                 </div>
             </form>
             

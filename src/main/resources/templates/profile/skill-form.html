@@ -5,11 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${skillDto.id != null ? 'Edit Skill' : 'Add Skill'} + ' - SkillBridge'">Manage Skill</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        body { background-color: #f8f9fa; }
-        .form-container { max-width: 600px; margin-top: 50px; }
-        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .card-header { background-color: #0d6efd; color: white; border-radius: 10px 10px 0 0 !important; padding: 20px; }
+        .form-container { max-width: 650px; margin-top: 40px; }
+        .form-label {
+            font-weight: 500;
+            color: var(--sb-text-muted);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .form-control, .form-select {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--sb-border);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--sb-primary);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+        }
+        .type-selector .form-check-input {
+            display: none;
+        }
+        .type-selector .form-check-label {
+            border: 1px solid var(--sb-border);
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            color: var(--sb-text-muted);
+        }
+        .type-selector .form-check-input:checked + .form-check-label[for="typeOffered"] {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: var(--sb-accent);
+            color: var(--sb-accent);
+        }
+        .type-selector .form-check-input:checked + .form-check-label[for="typeRequired"] {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-color: #f59e0b;
+            color: #d97706;
+        }
     </style>
 </head>
 <body>
@@ -17,68 +56,86 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="container form-container mb-5">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="mb-0" th:text="${skillDto.id != null ? 'Edit Skill' : 'Add New Skill'}">Manage Skill</h3>
+    <div class="sb-card">
+        <div class="card-header bg-white border-bottom pt-4 pb-3">
+            <h4 class="fw-bold mb-0">
+                <i class="bi bi-journal-code text-primary me-2"></i>
+                <span th:text="${skillDto.id != null ? 'Edit Skill' : 'Add New Skill'}">Manage Skill</span>
+            </h4>
         </div>
-        <div class="card-body p-4">
+        <div class="card-body p-4 p-md-5">
             
-            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <div th:if="${errorMessage}" class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
                 <span th:text="${errorMessage}"></span>
             </div>
 
-            <form th:action="${skillDto.id != null ? '/profile/skills/' + skillDto.id + '/edit' : '/profile/skills/add'}" th:object="${skillDto}" method="post">
+            <form th:action="${skillDto.id != null ? '/profile/skills/' + skillDto.id + '/edit' : '/profile/skills/add'}" th:object="${skillDto}" method="post" class="needs-validation">
                 
                 <input type="hidden" th:field="*{id}" />
 
-                <div class="mb-3">
-                    <label for="skillName" class="form-label">Skill Name</label>
-                    <input type="text" class="form-control" id="skillName" th:field="*{skillName}" placeholder="e.g. Java, Graphic Design">
-                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillName')}" th:errors="*{skillName}"></div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="skillCategory" class="form-label">Category</label>
-                    <select class="form-select" id="skillCategory" th:field="*{skillCategory}">
-                        <option value="" disabled selected>-- Select a category --</option>
-                        <option th:each="cat : ${T(com.skillbridge.model.enums.SkillCategory).values()}" th:value="${cat}" th:text="${cat}"></option>
-                    </select>
-                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillCategory')}" th:errors="*{skillCategory}"></div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label d-block">Skill Type</label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="typeOffered" name="skillType" value="OFFERED" th:field="*{skillType}">
-                        <label class="form-check-label" for="typeOffered">Teach</label>
+                <div class="mb-4">
+                    <label class="form-label d-block mb-3">Skill Type</label>
+                    <div class="row g-3 type-selector">
+                        <div class="col-6">
+                            <div class="form-check p-0 m-0 h-100">
+                                <input class="form-check-input" type="radio" id="typeOffered" name="skillType" value="OFFERED" th:field="*{skillType}">
+                                <label class="form-check-label h-100 m-0" for="typeOffered">
+                                    <i class="bi bi-mortarboard-fill fs-5"></i> I can Teach
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check p-0 m-0 h-100">
+                                <input class="form-check-input" type="radio" id="typeRequired" name="skillType" value="REQUIRED" th:field="*{skillType}">
+                                <label class="form-check-label h-100 m-0" for="typeRequired">
+                                    <i class="bi bi-lightbulb-fill fs-5"></i> I want to Learn
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="typeRequired" name="skillType" value="REQUIRED" th:field="*{skillType}">
-                        <label class="form-check-label" for="typeRequired">Learn</label>
-                    </div>
-                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillType')}" th:errors="*{skillType}"></div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="skillLevel" class="form-label">Skill Level</label>
-                    <select class="form-select" id="skillLevel" th:field="*{skillLevel}">
-                        <option value="" disabled selected>-- Select your level --</option>
-                        <option value="BEGINNER">Beginner</option>
-                        <option value="INTERMEDIATE">Intermediate</option>
-                        <option value="ADVANCED">Advanced</option>
-                    </select>
-                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillLevel')}" th:errors="*{skillLevel}"></div>
+                    <div class="text-danger small mt-2" th:if="${#fields.hasErrors('skillType')}" th:errors="*{skillType}"></div>
                 </div>
 
                 <div class="mb-4">
-                    <label for="description" class="form-label">Description (Optional)</label>
-                    <textarea class="form-control" id="description" rows="3" th:field="*{description}" placeholder="Details about your experience or learning goals..."></textarea>
+                    <label for="skillName" class="form-label">Skill Name</label>
+                    <input type="text" class="form-control" id="skillName" th:field="*{skillName}" placeholder="e.g. Java, Graphic Design, Spanish">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillName')}" th:errors="*{skillName}"></div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label for="skillCategory" class="form-label">Category</label>
+                        <select class="form-select" id="skillCategory" th:field="*{skillCategory}">
+                            <option value="" disabled selected>-- Select a category --</option>
+                            <option th:each="cat : ${T(com.skillbridge.model.enums.SkillCategory).values()}" th:value="${cat}" th:text="${cat}"></option>
+                        </select>
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillCategory')}" th:errors="*{skillCategory}"></div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="skillLevel" class="form-label">Skill Level</label>
+                        <select class="form-select" id="skillLevel" th:field="*{skillLevel}">
+                            <option value="" disabled selected>-- Select your level --</option>
+                            <option value="BEGINNER">Beginner</option>
+                            <option value="INTERMEDIATE">Intermediate</option>
+                            <option value="ADVANCED">Advanced</option>
+                        </select>
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('skillLevel')}" th:errors="*{skillLevel}"></div>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <label for="description" class="form-label">Description <span class="text-muted fw-normal ms-1">(Optional)</span></label>
+                    <textarea class="form-control" id="description" rows="3" th:field="*{description}" placeholder="Details about your experience, certifications, or specific goals..."></textarea>
                     <div class="text-danger small mt-1" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                 </div>
 
-                <div class="d-flex justify-content-between">
-                    <a th:href="@{/profile/skills}" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary px-4" th:text="${skillDto.id != null ? 'Update Skill' : 'Add Skill'}">Save</button>
+                <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                    <a th:href="@{/profile/skills}" class="btn btn-light border px-4 py-2 fw-medium text-dark rounded-pill shadow-sm">Cancel</a>
+                    <button type="submit" class="btn btn-sb-primary px-4 py-2 rounded-pill shadow-sm">
+                        <i class="bi bi-check2-circle me-1"></i> <span th:text="${skillDto.id != null ? 'Update Skill' : 'Save Skill'}">Save</span>
+                    </button>
                 </div>
             </form>
             

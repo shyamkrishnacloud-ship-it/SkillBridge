@@ -45,6 +45,19 @@
             letter-spacing: 0.5px;
             font-weight: 600;
         }
+        .review-card {
+            margin-bottom: 1.5rem;
+        }
+        .skill-card {
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+        }
+        .skill-card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
@@ -52,7 +65,7 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="container profile-container mb-5">
-    <div class="sb-card mt-4">
+    <div class="sb-card mt-4 mb-4">
         <div class="hero-banner"></div>
         <div class="card-body text-center pt-0 px-4 pb-5">
             <img th:if="${profile.existingProfilePicturePath != null}" th:src="@{${profile.existingProfilePicturePath}}" alt="Profile Picture" class="profile-img mb-3">
@@ -60,66 +73,67 @@
             
             <h3 class="fw-bold mb-1" th:text="${profile.username}">Username</h3>
             <div class="mb-4 d-flex justify-content-center">
-                <span class="badge bg-warning bg-opacity-25 text-dark border border-warning-subtle fs-6 rounded-pill px-3 py-2 d-flex align-items-center gap-1 shadow-sm">
-                    <i class="bi bi-star-fill text-warning"></i> <span th:text="${#numbers.formatDecimal(profile.averageRating, 1, 1)}">0.0</span> Rating
+                <span class="badge bg-warning bg-opacity-10 text-dark border border-warning-subtle fs-6 rounded-pill px-3 py-2 d-flex align-items-center gap-2 shadow-sm">
+                    <i class="bi bi-star-fill text-warning"></i> <span class="fw-bold" th:text="${#numbers.formatDecimal(profile.averageRating, 1, 1)}">0.0</span> Rating
                 </span>
             </div>
             
             <div class="row text-start justify-content-center mb-4">
                 <div class="col-md-10">
-                    <div class="sb-card bg-light border-0 p-4">
+                    <div class="sb-card bg-light border-0 p-4 p-md-5">
                         <div class="row g-4">
                             <div class="col-sm-6">
-                                <p class="mb-1 text-muted fw-semibold small text-uppercase">Department</p>
-                                <p class="mb-0 fw-medium" th:text="${profile.department != null ? profile.department : 'Not specified'}"></p>
+                                <p class="mb-1 text-muted fw-semibold small text-uppercase letter-spacing-1">Department</p>
+                                <p class="mb-0 fw-medium fs-5" th:text="${profile.department != null ? profile.department : 'Not specified'}"></p>
                             </div>
                             <div class="col-sm-6">
-                                <p class="mb-1 text-muted fw-semibold small text-uppercase">Semester</p>
-                                <p class="mb-0 fw-medium" th:text="${profile.semester != null ? profile.semester : 'Not specified'}"></p>
+                                <p class="mb-1 text-muted fw-semibold small text-uppercase letter-spacing-1">Semester</p>
+                                <p class="mb-0 fw-medium fs-5" th:text="${profile.semester != null ? profile.semester : 'Not specified'}"></p>
                             </div>
-                            <div class="col-12">
-                                <p class="mb-1 text-muted fw-semibold small text-uppercase">Bio</p>
-                                <p class="mb-0 text-dark" th:text="${profile.bio != null ? profile.bio : 'No bio added yet.'}"></p>
+                            <div class="col-12 mt-4">
+                                <p class="mb-2 text-muted fw-semibold small text-uppercase letter-spacing-1">Bio</p>
+                                <p class="mb-0 text-dark lh-lg" th:text="${profile.bio != null ? profile.bio : 'No bio added yet.'}"></p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="mt-4" th:unless="${isSelf}">
+            <div class="mt-5" th:unless="${isSelf}">
                 <div th:if="${hasActiveRequest}">
-                    <a th:href="@{/requests/incoming}" class="btn btn-secondary px-4 py-2 rounded-pill shadow-sm"><i class="bi bi-box-arrow-in-down me-2"></i>View Existing Request</a>
+                    <a th:href="@{/requests/incoming}" class="btn btn-secondary px-5 py-3 rounded-pill shadow-sm fw-medium fs-5"><i class="bi bi-box-arrow-in-down me-2"></i>View Existing Request</a>
                 </div>
                 <div th:unless="${hasActiveRequest}">
-                    <a th:href="@{/requests/send/{username}(username=${profile.username})}" class="btn btn-sb-accent px-4 py-2 rounded-pill shadow-sm"><i class="bi bi-send-fill me-2"></i>Send Swap Request</a>
+                    <a th:href="@{/requests/send/{username}(username=${profile.username})}" class="btn btn-sb-accent px-5 py-3 rounded-pill shadow-sm fw-medium fs-5"><i class="bi bi-send-fill me-2"></i>Send Swap Request</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="sb-card mt-4">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+    <div class="sb-card mb-4">
+        <div class="card-header bg-white border-bottom pt-4 pb-3 px-4 px-md-5 d-flex align-items-center gap-2">
+            <i class="bi bi-tools text-primary fs-4"></i>
             <h5 class="fw-bold mb-0" th:text="|${profile.username}'s Skills|">Skills</h5>
         </div>
-        <div class="card-body">
-            <div th:if="${skills == null or #lists.isEmpty(skills)}" class="text-center py-4">
-                <div class="text-muted mb-2"><i class="bi bi-journal-x fs-1"></i></div>
-                <p class="text-muted mb-0">This user hasn't added any skills yet.</p>
+        <div class="card-body p-4 p-md-5">
+            <div th:if="${skills == null or #lists.isEmpty(skills)}" class="text-center py-5 border rounded-4 bg-light">
+                <div class="text-muted mb-3"><i class="bi bi-journal-x fs-1"></i></div>
+                <p class="text-muted mb-0 fs-5">This user hasn't added any skills yet.</p>
             </div>
             
             <div th:unless="${skills == null or #lists.isEmpty(skills)}" class="row row-cols-1 row-cols-md-2 g-4">
                 <div class="col" th:each="skill : ${skills}">
-                    <div class="sb-card h-100 border transition-hover" style="transition: transform 0.2s; cursor: default;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title text-primary fw-bold mb-0" th:text="${skill.skillName}">Skill Name</h5>
-                                <span class="badge rounded-pill px-2 py-1" th:classappend="${skill.skillType.name() == 'OFFERED' ? 'bg-success bg-opacity-10 text-success border border-success-subtle' : 'bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle'}" th:text="${skill.skillType.name() == 'OFFERED' ? 'Teach' : 'Learn'}">Type</span>
+                    <div class="sb-card skill-card border transition-hover">
+                        <div class="card-body skill-card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-4 gap-2">
+                                <h5 class="card-title text-dark fw-bold mb-0 lh-base" th:text="${skill.skillName}">Skill Name</h5>
+                                <span class="badge rounded-pill px-3 py-1 fw-medium flex-shrink-0" th:classappend="${skill.skillType.name() == 'OFFERED' ? 'bg-success bg-opacity-10 text-success border border-success-subtle' : 'bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle'}" th:text="${skill.skillType.name() == 'OFFERED' ? 'Teach' : 'Learn'}">Type</span>
                             </div>
-                            <div class="mb-3 d-flex align-items-center gap-2">
-                                <span class="badge bg-light text-dark border"><i class="bi bi-tag-fill text-muted me-1"></i><span th:text="${skill.skillCategory}">Category</span></span>
-                                <span class="badge bg-light text-dark border"><i class="bi bi-bar-chart-fill text-muted me-1"></i><span th:text="${skill.skillLevel}">Level</span></span>
+                            <div class="mb-4 d-flex align-items-center gap-2 flex-wrap">
+                                <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-tag-fill text-muted me-1"></i><span th:text="${skill.skillCategory}">Category</span></span>
+                                <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-bar-chart-fill text-muted me-1"></i><span th:text="${skill.skillLevel}">Level</span></span>
                             </div>
-                            <p class="card-text small text-secondary mb-0" th:if="${skill.description}" th:text="${skill.description}">Description</p>
+                            <p class="card-text text-secondary mb-0 mt-auto lh-lg" style="font-size: 0.95rem;" th:if="${skill.description}" th:text="${skill.description}">Description</p>
                         </div>
                     </div>
                 </div>
@@ -128,42 +142,58 @@
     </div>
 
     <!-- Reviews Section -->
-    <div class="sb-card mt-4">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0" th:text="|${profile.username}'s Reviews|">Reviews</h5>
-            <a th:href="@{/profile/{username}/reviews(username=${profile.username})}" class="btn btn-light btn-sm text-primary fw-medium" th:if="${profile.reviewCount > 0}">View All Reviews</a>
+    <div class="sb-card mb-5">
+        <div class="card-header bg-white border-bottom pt-4 pb-3 px-4 px-md-5 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-star-fill text-warning fs-4"></i>
+                <h5 class="fw-bold mb-0" th:text="|${profile.username}'s Reviews|">Reviews</h5>
+            </div>
+            <a th:href="@{/profile/{username}/reviews(username=${profile.username})}" class="btn btn-light border rounded-pill shadow-sm fw-medium px-4 text-dark transition-hover" th:if="${profile.reviewCount > 0}">View All Reviews</a>
         </div>
-        <div class="card-body">
-            <div class="d-flex align-items-center mb-4" th:if="${profile.reviewCount > 0}">
-                <div class="display-6 fw-bold text-success me-3">
+        <div class="card-body p-4 p-md-5">
+            <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-5" th:if="${profile.reviewCount > 0}">
+                <div class="display-4 fw-bold text-dark me-3">
                     <span th:text="${#numbers.formatDecimal(profile.averageRating, 1, 1)}">0.0</span>
                 </div>
                 <div>
-                    <div class="text-warning fs-5">
-                        <i class="bi" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= profile.averageRating ? 'bi-star-fill' : 'bi-star'}"></i>
+                    <div class="d-flex align-items-center mb-1 bg-warning bg-opacity-10 border border-warning-subtle rounded-pill px-3 py-1">
+                        <i class="bi" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= profile.averageRating ? 'bi-star-fill text-warning me-1' : 'bi-star text-warning opacity-25 me-1'}" style="font-size: 1.25rem;"></i>
                     </div>
-                    <small class="text-muted fw-medium" th:text="|Based on ${profile.reviewCount} reviews|">0 reviews</small>
+                    <small class="text-muted fw-medium d-block text-center mt-2" th:text="|Based on ${profile.reviewCount} completed swaps|">0 reviews</small>
                 </div>
             </div>
 
-            <div th:if="${#lists.isEmpty(recentReviews)}" class="text-center py-4 border rounded-3 bg-light">
-                <div class="text-muted mb-2"><i class="bi bi-chat-left-text fs-2"></i></div>
-                <p class="text-muted mb-0">This user hasn't received any reviews yet.</p>
+            <div th:if="${#lists.isEmpty(recentReviews)}" class="text-center py-5 border rounded-4 bg-light">
+                <div class="text-muted mb-3"><i class="bi bi-chat-left-text fs-1"></i></div>
+                <p class="text-muted mb-0 fs-5">This user hasn't received any reviews yet.</p>
             </div>
 
-            <div th:unless="${#lists.isEmpty(recentReviews)}" class="list-group list-group-flush border-top">
-                <div th:each="review : ${recentReviews}" class="list-group-item py-4 px-0 border-bottom">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <strong class="fs-5">
-                            <a th:href="@{/profile/{username}(username=${review.reviewerUsername})}" class="text-decoration-none text-dark" th:text="${review.reviewerUsername}">User</a>
-                        </strong>
-                        <div class="text-warning bg-warning bg-opacity-10 px-2 py-1 rounded-pill">
-                            <i class="bi" style="font-size: 0.85rem;" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= review.rating ? 'bi-star-fill' : 'bi-star'}"></i>
+            <div th:unless="${#lists.isEmpty(recentReviews)}">
+                <div class="row g-4">
+                    <div class="col-12" th:each="review : ${recentReviews}">
+                        <div class="sb-card review-card border mb-0 transition-hover">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold fs-5 border shadow-sm" style="width: 45px; height: 45px;">
+                                            <span th:text="${#strings.substring(review.reviewerUsername,0,1).toUpperCase()}">R</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold fs-5">
+                                                <a th:href="@{/profile/{username}(username=${review.reviewerUsername})}" class="text-decoration-none text-dark stretched-link-hover" th:text="${review.reviewerUsername}">User</a>
+                                            </h6>
+                                            <small class="text-muted fw-medium d-flex align-items-center mt-1"><i class="bi bi-calendar3 me-1"></i><span th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}">Date</span></small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex bg-warning bg-opacity-10 border border-warning-subtle rounded-pill px-3 py-1 shadow-sm">
+                                        <i class="bi" style="font-size: 0.95rem;" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= review.rating ? 'bi-star-fill text-warning me-1' : 'bi-star text-warning opacity-25 me-1'}"></i>
+                                    </div>
+                                </div>
+                                <p class="mb-0 text-dark fs-6 lh-lg mt-3" th:if="${review.comment != null and !review.comment.isEmpty()}" th:text="${review.comment}"></p>
+                                <p class="mb-0 text-muted fst-italic mt-3" th:unless="${review.comment != null and !review.comment.isEmpty()}">No comment provided.</p>
+                            </div>
                         </div>
                     </div>
-                    <small class="text-muted mb-3 d-block fw-medium"><i class="bi bi-calendar3 me-1"></i><span th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}">Date</span></small>
-                    <p class="mb-0 text-dark bg-light p-3 rounded-3 border" th:if="${review.comment != null and !review.comment.isEmpty()}" th:text="${review.comment}"></p>
-                    <p class="mb-0 text-muted fst-italic" th:unless="${review.comment != null and !review.comment.isEmpty()}">No comment provided.</p>
                 </div>
             </div>
         </div>

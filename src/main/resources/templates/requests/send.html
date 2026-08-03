@@ -5,11 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Send Swap Request - SkillBridge</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        body { background-color: #f8f9fa; }
-        .form-container { max-width: 600px; margin-top: 50px; margin-bottom: 50px; }
-        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .card-header { background-color: #198754; color: white; border-radius: 10px 10px 0 0 !important; padding: 20px; }
+        .form-container { max-width: 650px; margin-top: 40px; margin-bottom: 50px; }
+        .form-label {
+            font-weight: 500;
+            color: var(--sb-text-muted);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--sb-border);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--sb-accent);
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.15);
+        }
+        .skill-select-wrapper {
+            background-color: rgba(248, 250, 252, 0.8);
+            border: 1px solid var(--sb-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
     </style>
 </head>
 <body>
@@ -17,49 +37,64 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="container form-container">
-    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span th:text="${errorMessage}"></span>
+    </div>
     
-    <div class="card">
-        <div class="card-header text-center">
-            <h3 class="mb-0">Send Swap Request to <span th:text="${receiverUsername}"></span></h3>
+    <div class="sb-card border-top border-4 border-accent border-start-0 border-end-0 border-bottom-0">
+        <div class="card-header bg-white border-bottom pt-4 pb-3 text-center">
+            <div class="d-inline-flex justify-content-center align-items-center bg-accent bg-opacity-10 text-accent rounded-circle mb-3" style="width: 60px; height: 60px;">
+                <i class="bi bi-arrow-left-right fs-2"></i>
+            </div>
+            <h4 class="mb-1 fw-bold text-dark">Send Swap Request</h4>
+            <p class="text-muted mb-0">Connect and exchange skills with <span class="fw-bold text-primary" th:text="${receiverUsername}">User</span></p>
         </div>
-        <div class="card-body p-4">
+        <div class="card-body p-4 p-md-5">
             <form th:action="@{/requests/send}" th:object="${creationDto}" method="post">
                 <input type="hidden" th:field="*{receiverUsername}">
                 
-                <div class="mb-4">
-                    <label for="offeredSkillId" class="form-label fw-bold">Select One of Your Offered Skills (They will learn this)</label>
-                    <select class="form-select" id="offeredSkillId" th:field="*{offeredSkillId}" required>
-                        <option value="" selected disabled>-- Select a skill you teach --</option>
+                <div class="skill-select-wrapper position-relative">
+                    <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-white text-success border shadow-sm px-3 py-1">
+                        <i class="bi bi-mortarboard-fill me-1"></i> You Teach
+                    </div>
+                    <label for="offeredSkillId" class="form-label d-block text-center mt-2 mb-3">Select a skill you can teach them</label>
+                    <select class="form-select text-center fw-medium" id="offeredSkillId" th:field="*{offeredSkillId}" required>
+                        <option value="" selected disabled>-- Choose an offered skill --</option>
                         <option th:each="skill : ${myOfferedSkills}" th:value="${skill.id}" th:text="${skill.skillName} + ' (' + ${skill.skillLevel} + ')'"></option>
                     </select>
-                    <div class="text-danger mt-1" th:if="${#fields.hasErrors('offeredSkillId')}" th:errors="*{offeredSkillId}"></div>
-                    <div th:if="${#lists.isEmpty(myOfferedSkills)}" class="text-danger mt-2 small">
-                        You have not offered any skills yet. <a th:href="@{/profile/skills}">Add an offered skill first.</a>
+                    <div class="text-danger mt-2 small text-center" th:if="${#fields.hasErrors('offeredSkillId')}" th:errors="*{offeredSkillId}"></div>
+                    <div th:if="${#lists.isEmpty(myOfferedSkills)}" class="text-danger mt-3 small text-center bg-danger bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-exclamation-circle me-1"></i> You have not offered any skills yet. <a th:href="@{/profile/skills}" class="fw-bold text-danger">Add an offered skill first.</a>
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label for="requestedSkillId" class="form-label fw-bold">Select One of Their Required Skills (You will learn this)</label>
-                    <select class="form-select" id="requestedSkillId" th:field="*{requestedSkillId}" required>
-                        <option value="" selected disabled>-- Select a skill they want to learn --</option>
+                <div class="skill-select-wrapper position-relative mt-4">
+                    <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-white text-warning-emphasis border shadow-sm px-3 py-1">
+                        <i class="bi bi-lightbulb-fill me-1"></i> You Learn
+                    </div>
+                    <label for="requestedSkillId" class="form-label d-block text-center mt-2 mb-3">Select a skill they can teach you</label>
+                    <select class="form-select text-center fw-medium" id="requestedSkillId" th:field="*{requestedSkillId}" required>
+                        <option value="" selected disabled>-- Choose a requested skill --</option>
                         <option th:each="skill : ${receiverRequiredSkills}" th:value="${skill.id}" th:text="${skill.skillName} + ' (' + ${skill.skillLevel} + ')'"></option>
                     </select>
-                    <div class="text-danger mt-1" th:if="${#fields.hasErrors('requestedSkillId')}" th:errors="*{requestedSkillId}"></div>
-                    <div th:if="${#lists.isEmpty(receiverRequiredSkills)}" class="text-danger mt-2 small">
-                        This user hasn't requested any skills. They might just want to teach.
+                    <div class="text-danger mt-2 small text-center" th:if="${#fields.hasErrors('requestedSkillId')}" th:errors="*{requestedSkillId}"></div>
+                    <div th:if="${#lists.isEmpty(receiverRequiredSkills)}" class="text-danger mt-3 small text-center bg-danger bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-info-circle me-1"></i> This user hasn't requested any skills. They might just want to teach.
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label for="message" class="form-label fw-bold">Optional Message</label>
-                    <textarea class="form-control" id="message" rows="3" th:field="*{message}" placeholder="Introduce yourself and propose a time..."></textarea>
-                    <div class="text-danger mt-1" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
+                <div class="mb-5 mt-4">
+                    <label for="message" class="form-label"><i class="bi bi-chat-left-text me-1 text-muted"></i> Add a message <span class="text-muted fw-normal small">(Optional)</span></label>
+                    <textarea class="form-control bg-light border-0" id="message" rows="3" th:field="*{message}" placeholder="Introduce yourself, mention why you're interested, and propose a time..."></textarea>
+                    <div class="text-danger mt-1 small" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
                 </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-success btn-lg" th:disabled="${#lists.isEmpty(myOfferedSkills) or #lists.isEmpty(receiverRequiredSkills)}">Send Request</button>
-                    <a th:href="@{/profile/{username}(username=${receiverUsername})}" class="btn btn-outline-secondary">Cancel</a>
+                <div class="d-flex flex-column flex-sm-row gap-3 pt-3 border-top">
+                    <a th:href="@{/profile/{username}(username=${receiverUsername})}" class="btn btn-light border py-3 px-4 fw-medium text-dark rounded-pill flex-grow-1 text-center transition-hover">Cancel</a>
+                    <button type="submit" class="btn btn-sb-accent py-3 px-4 fw-bold rounded-pill shadow-sm flex-grow-1" th:disabled="${#lists.isEmpty(myOfferedSkills) or #lists.isEmpty(receiverRequiredSkills)}">
+                        <i class="bi bi-send-fill me-2"></i> Send Swap Request
+                    </button>
                 </div>
             </form>
         </div>

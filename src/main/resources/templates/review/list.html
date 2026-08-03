@@ -5,65 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${revieweeUsername} + ' Reviews - SkillBridge'">Reviews</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style th:replace="~{fragments/navbar :: global-styles}"></style>
     <style>
-        body { background-color: #f8f9fa; }
-        .review-card { border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .star-rating { color: #ffc107; font-size: 1.2rem; letter-spacing: 2px; }
+        .star-rating { color: #f59e0b; font-size: 1.15rem; letter-spacing: 1px; display: inline-flex; align-items: center; }
+        .rating-hero {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(16, 185, 129, 0.05));
+            border: 1px solid var(--sb-border);
+        }
+        .review-card {
+            margin-bottom: 1.5rem;
+        }
     </style>
 </head>
 <body>
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container mt-5 mb-5">
+<div class="container mt-4 mt-md-5 mb-5" style="max-width: 900px;">
     
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>
-            <a th:href="@{/profile/{username}(username=${revieweeUsername})}" class="text-decoration-none text-dark">
-                <span th:text="${revieweeUsername}"></span>'s Reviews
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h3 class="fw-bold mb-0">
+            <a th:href="@{/profile/{username}(username=${revieweeUsername})}" class="text-decoration-none text-dark transition-hover">
+                <i class="bi bi-person-circle text-primary me-2"></i><span th:text="${revieweeUsername}"></span>'s Reviews
             </a>
-        </h2>
+        </h3>
         <div>
-            <a th:href="@{/profile/{username}(username=${revieweeUsername})}" class="btn btn-outline-primary">Back to Profile</a>
+            <a th:href="@{/profile/{username}(username=${revieweeUsername})}" class="btn btn-light border rounded-pill shadow-sm fw-medium text-dark transition-hover px-4"><i class="bi bi-arrow-left me-1"></i> Back to Profile</a>
         </div>
     </div>
 
-    <div class="card mb-4 bg-light border-0 shadow-sm">
-        <div class="card-body text-center">
-            <h4 class="mb-1">Average Rating</h4>
-            <div class="display-6 fw-bold text-success mb-2">
-                <span th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">0.0</span> <small class="text-muted fs-5">/ 5.0</small>
+    <div class="sb-card rating-hero mb-5">
+        <div class="card-body text-center py-5">
+            <h5 class="mb-3 text-muted fw-semibold text-uppercase letter-spacing-1 fs-6">Average Rating</h5>
+            <div class="display-3 fw-bold text-dark mb-3 d-flex align-items-center justify-content-center gap-3">
+                <span th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">0.0</span>
+                <i class="bi bi-star-fill text-warning" style="font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3));"></i>
             </div>
-            <div class="text-muted">
-                Based on <span th:text="${reviewCount}">0</span> reviews
+            <div class="text-muted fw-medium fs-5">
+                Based on <span class="text-primary fw-bold" th:text="${reviewCount}">0</span> completed swap requests
             </div>
         </div>
     </div>
 
-    <div th:if="${#lists.isEmpty(reviews)}" class="alert alert-info text-center py-4">
-        <h5>No reviews yet!</h5>
-        <p class="mb-0">This user hasn't received any reviews from completed swap requests.</p>
+    <div th:if="${#lists.isEmpty(reviews)}" class="sb-card text-center py-5 border-0">
+        <div class="card-body py-5">
+            <div class="text-muted mb-4"><i class="bi bi-chat-square-text" style="font-size: 3.5rem;"></i></div>
+            <h4 class="fw-bold mb-3">No reviews yet!</h4>
+            <p class="text-muted mb-0 fs-5">This user hasn't received any reviews from completed swap requests.</p>
+        </div>
     </div>
 
-    <div class="row" th:unless="${#lists.isEmpty(reviews)}">
+    <div class="row g-4" th:unless="${#lists.isEmpty(reviews)}">
         <div class="col-md-6" th:each="review : ${reviews}">
-            <div class="card review-card border-0">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <strong>
-                                <a th:href="@{/profile/{username}(username=${review.reviewerUsername})}" class="text-decoration-none" th:text="${review.reviewerUsername}">Reviewer</a>
-                            </strong>
-                            <br>
-                            <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy, HH:mm')}">Date</small>
+            <div class="sb-card review-card h-100 border transition-hover">
+                <div class="card-body p-4 p-md-5 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-4 border-bottom pb-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold fs-4 border shadow-sm" style="width: 50px; height: 50px;">
+                                <span th:text="${#strings.substring(review.reviewerUsername,0,1).toUpperCase()}">R</span>
+                            </div>
+                            <div>
+                                <h5 class="mb-1 fw-bold">
+                                    <a th:href="@{/profile/{username}(username=${review.reviewerUsername})}" class="text-decoration-none text-dark stretched-link-hover" th:text="${review.reviewerUsername}">Reviewer</a>
+                                </h5>
+                                <small class="text-muted fw-medium d-flex align-items-center"><i class="bi bi-calendar3 me-1"></i> <span th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}">Date</span></small>
+                            </div>
                         </div>
-                        <div class="star-rating">
-                            <span th:each="i : ${#numbers.sequence(1, 5)}" th:text="${i <= review.rating ? '★' : '☆'}"></span>
+                        <div class="star-rating px-3 py-1 bg-warning bg-opacity-10 border border-warning-subtle rounded-pill shadow-sm">
+                            <i class="bi" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= review.rating ? 'bi-star-fill text-warning me-1' : 'bi-star text-warning opacity-25 me-1'}"></i>
                         </div>
                     </div>
                     
-                    <p class="card-text mt-3 text-secondary" th:if="${review.comment != null and !review.comment.isEmpty()}" th:text="${review.comment}"></p>
-                    <p class="card-text mt-3 text-muted fst-italic" th:unless="${review.comment != null and !review.comment.isEmpty()}">No comment provided.</p>
+                    <div class="mt-2 flex-grow-1">
+                        <p class="card-text text-dark fs-6 lh-lg" th:if="${review.comment != null and !review.comment.isEmpty()}" th:text="${review.comment}"></p>
+                        <p class="card-text text-muted fst-italic fs-6" th:unless="${review.comment != null and !review.comment.isEmpty()}">No comment provided.</p>
+                    </div>
                 </div>
             </div>
         </div>
